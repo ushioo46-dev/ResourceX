@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ForProvidersRouteImport } from './routes/for-providers'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as ResultsRouteImport } from './routes/results'
 import { Route as SearchRouteImport } from './routes/search'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const HowItWorksRoute = HowItWorksRouteImport.update({
   path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResultsRoute = ResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/for-providers': typeof ForProvidersRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/for-providers': typeof ForProvidersRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
 }
 export interface FileRoutesById {
@@ -61,15 +69,24 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/for-providers': typeof ForProvidersRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/for-providers' | '/how-it-works' | '/search'
+  fullPaths:
+    '/' | '/about' | '/for-providers' | '/how-it-works' | '/results' | '/search'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/for-providers' | '/how-it-works' | '/search'
+  to:
+    '/' | '/about' | '/for-providers' | '/how-it-works' | '/results' | '/search'
   id:
-    '__root__' | '/' | '/about' | '/for-providers' | '/how-it-works' | '/search'
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/for-providers'
+    | '/how-it-works'
+    | '/results'
+    | '/search'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +94,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ForProvidersRoute: typeof ForProvidersRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  ResultsRoute: typeof ResultsRoute
   SearchRoute: typeof SearchRoute
 }
 
@@ -110,6 +128,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/results': {
+      id: '/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -125,6 +150,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ForProvidersRoute: ForProvidersRoute,
   HowItWorksRoute: HowItWorksRoute,
+  ResultsRoute: ResultsRoute,
   SearchRoute: SearchRoute,
 }
 export const routeTree = rootRouteImport
