@@ -15,6 +15,7 @@ import { Route as ForProvidersRouteImport } from './routes/for-providers'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as NegotiationResourceIdRouteImport } from './routes/negotiation.$resourceId'
 import { Route as RequestResourceIdRouteImport } from './routes/request.$resourceId'
 import { Route as ResourceResourceIdRouteImport } from './routes/resource.$resourceId'
 
@@ -48,6 +49,11 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NegotiationResourceIdRoute = NegotiationResourceIdRouteImport.update({
+  id: '/negotiation/$resourceId',
+  path: '/negotiation/$resourceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RequestResourceIdRoute = RequestResourceIdRouteImport.update({
   id: '/request/$resourceId',
   path: '/request/$resourceId',
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/how-it-works': typeof HowItWorksRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
+  '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
 }
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
+  '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
 }
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/how-it-works': typeof HowItWorksRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
+  '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
 }
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/results'
     | '/search'
+    | '/negotiation/$resourceId'
     | '/request/$resourceId'
     | '/resource/$resourceId'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/results'
     | '/search'
+    | '/negotiation/$resourceId'
     | '/request/$resourceId'
     | '/resource/$resourceId'
   id:
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/results'
     | '/search'
+    | '/negotiation/$resourceId'
     | '/request/$resourceId'
     | '/resource/$resourceId'
   fileRoutesById: FileRoutesById
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   HowItWorksRoute: typeof HowItWorksRoute
   ResultsRoute: typeof ResultsRoute
   SearchRoute: typeof SearchRoute
+  NegotiationResourceIdRoute: typeof NegotiationResourceIdRoute
   RequestResourceIdRoute: typeof RequestResourceIdRoute
   ResourceResourceIdRoute: typeof ResourceResourceIdRoute
 }
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/negotiation/$resourceId': {
+      id: '/negotiation/$resourceId'
+      path: '/negotiation/$resourceId'
+      fullPath: '/negotiation/$resourceId'
+      preLoaderRoute: typeof NegotiationResourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/request/$resourceId': {
       id: '/request/$resourceId'
       path: '/request/$resourceId'
@@ -202,6 +222,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowItWorksRoute: HowItWorksRoute,
   ResultsRoute: ResultsRoute,
   SearchRoute: SearchRoute,
+  NegotiationResourceIdRoute: NegotiationResourceIdRoute,
   RequestResourceIdRoute: RequestResourceIdRoute,
   ResourceResourceIdRoute: ResourceResourceIdRoute,
 }
