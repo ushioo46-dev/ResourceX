@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ForProvidersRouteImport } from './routes/for-providers'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as BookingResourceIdRouteImport } from './routes/booking.$resourceId'
@@ -38,6 +39,11 @@ const ForProvidersRoute = ForProvidersRouteImport.update({
 const HowItWorksRoute = HowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResultsRoute = ResultsRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/for-providers': typeof ForProvidersRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/for-providers': typeof ForProvidersRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/for-providers': typeof ForProvidersRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/for-providers'
     | '/how-it-works'
+    | '/login'
     | '/results'
     | '/search'
     | '/booking/$resourceId'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/for-providers'
     | '/how-it-works'
+    | '/login'
     | '/results'
     | '/search'
     | '/booking/$resourceId'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/for-providers'
     | '/how-it-works'
+    | '/login'
     | '/results'
     | '/search'
     | '/booking/$resourceId'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ForProvidersRoute: typeof ForProvidersRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  LoginRoute: typeof LoginRoute
   ResultsRoute: typeof ResultsRoute
   SearchRoute: typeof SearchRoute
   BookingResourceIdRoute: typeof BookingResourceIdRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/how-it-works'
       fullPath: '/how-it-works'
       preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/results': {
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ForProvidersRoute: ForProvidersRoute,
   HowItWorksRoute: HowItWorksRoute,
+  LoginRoute: LoginRoute,
   ResultsRoute: ResultsRoute,
   SearchRoute: SearchRoute,
   BookingResourceIdRoute: BookingResourceIdRoute,
