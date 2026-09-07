@@ -15,6 +15,7 @@ import { Route as ForProvidersRouteImport } from './routes/for-providers'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ResourceResourceIdRouteImport } from './routes/resource.$resourceId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResourceResourceIdRoute = ResourceResourceIdRouteImport.update({
+  id: '/resource/$resourceId',
+  path: '/resource/$resourceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/how-it-works': typeof HowItWorksRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
+  '/resource/$resourceId': typeof ResourceResourceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
+  '/resource/$resourceId': typeof ResourceResourceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,14 +79,27 @@ export interface FileRoutesById {
   '/how-it-works': typeof HowItWorksRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
+  '/resource/$resourceId': typeof ResourceResourceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/about' | '/for-providers' | '/how-it-works' | '/results' | '/search'
+    | '/'
+    | '/about'
+    | '/for-providers'
+    | '/how-it-works'
+    | '/results'
+    | '/search'
+    | '/resource/$resourceId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/about' | '/for-providers' | '/how-it-works' | '/results' | '/search'
+    | '/'
+    | '/about'
+    | '/for-providers'
+    | '/how-it-works'
+    | '/results'
+    | '/search'
+    | '/resource/$resourceId'
   id:
     | '__root__'
     | '/'
@@ -87,6 +108,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/results'
     | '/search'
+    | '/resource/$resourceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,6 +118,7 @@ export interface RootRouteChildren {
   HowItWorksRoute: typeof HowItWorksRoute
   ResultsRoute: typeof ResultsRoute
   SearchRoute: typeof SearchRoute
+  ResourceResourceIdRoute: typeof ResourceResourceIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -142,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/resource/$resourceId': {
+      id: '/resource/$resourceId'
+      path: '/resource/$resourceId'
+      fullPath: '/resource/$resourceId'
+      preLoaderRoute: typeof ResourceResourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -152,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowItWorksRoute: HowItWorksRoute,
   ResultsRoute: ResultsRoute,
   SearchRoute: SearchRoute,
+  ResourceResourceIdRoute: ResourceResourceIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
