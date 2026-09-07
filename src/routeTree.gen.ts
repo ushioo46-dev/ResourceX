@@ -15,6 +15,7 @@ import { Route as ForProvidersRouteImport } from './routes/for-providers'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as BookingResourceIdRouteImport } from './routes/booking.$resourceId'
 import { Route as NegotiationResourceIdRouteImport } from './routes/negotiation.$resourceId'
 import { Route as RequestResourceIdRouteImport } from './routes/request.$resourceId'
 import { Route as ResourceResourceIdRouteImport } from './routes/resource.$resourceId'
@@ -49,6 +50,11 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingResourceIdRoute = BookingResourceIdRouteImport.update({
+  id: '/booking/$resourceId',
+  path: '/booking/$resourceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NegotiationResourceIdRoute = NegotiationResourceIdRouteImport.update({
   id: '/negotiation/$resourceId',
   path: '/negotiation/$resourceId',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/how-it-works': typeof HowItWorksRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
+  '/booking/$resourceId': typeof BookingResourceIdRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
+  '/booking/$resourceId': typeof BookingResourceIdRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/how-it-works': typeof HowItWorksRoute
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
+  '/booking/$resourceId': typeof BookingResourceIdRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/results'
     | '/search'
+    | '/booking/$resourceId'
     | '/negotiation/$resourceId'
     | '/request/$resourceId'
     | '/resource/$resourceId'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/results'
     | '/search'
+    | '/booking/$resourceId'
     | '/negotiation/$resourceId'
     | '/request/$resourceId'
     | '/resource/$resourceId'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/results'
     | '/search'
+    | '/booking/$resourceId'
     | '/negotiation/$resourceId'
     | '/request/$resourceId'
     | '/resource/$resourceId'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   HowItWorksRoute: typeof HowItWorksRoute
   ResultsRoute: typeof ResultsRoute
   SearchRoute: typeof SearchRoute
+  BookingResourceIdRoute: typeof BookingResourceIdRoute
   NegotiationResourceIdRoute: typeof NegotiationResourceIdRoute
   RequestResourceIdRoute: typeof RequestResourceIdRoute
   ResourceResourceIdRoute: typeof ResourceResourceIdRoute
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking/$resourceId': {
+      id: '/booking/$resourceId'
+      path: '/booking/$resourceId'
+      fullPath: '/booking/$resourceId'
+      preLoaderRoute: typeof BookingResourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/negotiation/$resourceId': {
       id: '/negotiation/$resourceId'
       path: '/negotiation/$resourceId'
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowItWorksRoute: HowItWorksRoute,
   ResultsRoute: ResultsRoute,
   SearchRoute: SearchRoute,
+  BookingResourceIdRoute: BookingResourceIdRoute,
   NegotiationResourceIdRoute: NegotiationResourceIdRoute,
   RequestResourceIdRoute: RequestResourceIdRoute,
   ResourceResourceIdRoute: ResourceResourceIdRoute,
