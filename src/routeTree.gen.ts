@@ -17,6 +17,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ResultsRouteImport } from './routes/results'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as BookingResourceIdRouteImport } from './routes/booking.$resourceId'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as NegotiationResourceIdRouteImport } from './routes/negotiation.$resourceId'
 import { Route as ProfileBusinessRouteImport } from './routes/profile.$business'
 import { Route as RequestResourceIdRouteImport } from './routes/request.$resourceId'
@@ -62,6 +63,11 @@ const BookingResourceIdRoute = BookingResourceIdRouteImport.update({
   path: '/booking/$resourceId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NegotiationResourceIdRoute = NegotiationResourceIdRouteImport.update({
   id: '/negotiation/$resourceId',
   path: '/negotiation/$resourceId',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/profile/$business': typeof ProfileBusinessRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/profile/$business': typeof ProfileBusinessRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/profile/$business': typeof ProfileBusinessRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/profile/$business'
     | '/request/$resourceId'
     | '/resource/$resourceId'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/profile/$business'
     | '/request/$resourceId'
     | '/resource/$resourceId'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/profile/$business'
     | '/request/$resourceId'
     | '/resource/$resourceId'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +196,7 @@ export interface RootRouteChildren {
   ProfileBusinessRoute: typeof ProfileBusinessRoute
   RequestResourceIdRoute: typeof RequestResourceIdRoute
   ResourceResourceIdRoute: typeof ResourceResourceIdRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookingResourceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/negotiation/$resourceId': {
       id: '/negotiation/$resourceId'
       path: '/negotiation/$resourceId'
@@ -288,6 +308,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileBusinessRoute: ProfileBusinessRoute,
   RequestResourceIdRoute: RequestResourceIdRoute,
   ResourceResourceIdRoute: ResourceResourceIdRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
