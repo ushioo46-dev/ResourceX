@@ -10,33 +10,193 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ForProvidersRouteImport } from './routes/for-providers'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ResultsRouteImport } from './routes/results'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as BookingResourceIdRouteImport } from './routes/booking.$resourceId'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as NegotiationResourceIdRouteImport } from './routes/negotiation.$resourceId'
+import { Route as ProfileBusinessRouteImport } from './routes/profile.$business'
+import { Route as RequestResourceIdRouteImport } from './routes/request.$resourceId'
+import { Route as ResourceResourceIdRouteImport } from './routes/resource.$resourceId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForProvidersRoute = ForProvidersRouteImport.update({
+  id: '/for-providers',
+  path: '/for-providers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultsRoute = ResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingResourceIdRoute = BookingResourceIdRouteImport.update({
+  id: '/booking/$resourceId',
+  path: '/booking/$resourceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NegotiationResourceIdRoute = NegotiationResourceIdRouteImport.update({
+  id: '/negotiation/$resourceId',
+  path: '/negotiation/$resourceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileBusinessRoute = ProfileBusinessRouteImport.update({
+  id: '/profile/$business',
+  path: '/profile/$business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RequestResourceIdRoute = RequestResourceIdRouteImport.update({
+  id: '/request/$resourceId',
+  path: '/request/$resourceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourceResourceIdRoute = ResourceResourceIdRouteImport.update({
+  id: '/resource/$resourceId',
+  path: '/resource/$resourceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/for-providers': typeof ForProvidersRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/results': typeof ResultsRoute
+  '/search': typeof SearchRoute
+  '/booking/$resourceId': typeof BookingResourceIdRoute
+  '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
+  '/profile/$business': typeof ProfileBusinessRoute
+  '/request/$resourceId': typeof RequestResourceIdRoute
+  '/resource/$resourceId': typeof ResourceResourceIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/for-providers': typeof ForProvidersRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/results': typeof ResultsRoute
+  '/search': typeof SearchRoute
+  '/booking/$resourceId': typeof BookingResourceIdRoute
+  '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
+  '/profile/$business': typeof ProfileBusinessRoute
+  '/request/$resourceId': typeof RequestResourceIdRoute
+  '/resource/$resourceId': typeof ResourceResourceIdRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/for-providers': typeof ForProvidersRoute
+  '/how-it-works': typeof HowItWorksRoute
+  '/login': typeof LoginRoute
+  '/results': typeof ResultsRoute
+  '/search': typeof SearchRoute
+  '/booking/$resourceId': typeof BookingResourceIdRoute
+  '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
+  '/profile/$business': typeof ProfileBusinessRoute
+  '/request/$resourceId': typeof RequestResourceIdRoute
+  '/resource/$resourceId': typeof ResourceResourceIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/for-providers'
+    | '/how-it-works'
+    | '/login'
+    | '/results'
+    | '/search'
+    | '/booking/$resourceId'
+    | '/negotiation/$resourceId'
+    | '/profile/$business'
+    | '/request/$resourceId'
+    | '/resource/$resourceId'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/for-providers'
+    | '/how-it-works'
+    | '/login'
+    | '/results'
+    | '/search'
+    | '/booking/$resourceId'
+    | '/negotiation/$resourceId'
+    | '/profile/$business'
+    | '/request/$resourceId'
+    | '/resource/$resourceId'
+    | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/for-providers'
+    | '/how-it-works'
+    | '/login'
+    | '/results'
+    | '/search'
+    | '/booking/$resourceId'
+    | '/negotiation/$resourceId'
+    | '/profile/$business'
+    | '/request/$resourceId'
+    | '/resource/$resourceId'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  ForProvidersRoute: typeof ForProvidersRoute
+  HowItWorksRoute: typeof HowItWorksRoute
+  LoginRoute: typeof LoginRoute
+  ResultsRoute: typeof ResultsRoute
+  SearchRoute: typeof SearchRoute
+  BookingResourceIdRoute: typeof BookingResourceIdRoute
+  NegotiationResourceIdRoute: typeof NegotiationResourceIdRoute
+  ProfileBusinessRoute: typeof ProfileBusinessRoute
+  RequestResourceIdRoute: typeof RequestResourceIdRoute
+  ResourceResourceIdRoute: typeof ResourceResourceIdRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +208,107 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-providers': {
+      id: '/for-providers'
+      path: '/for-providers'
+      fullPath: '/for-providers'
+      preLoaderRoute: typeof ForProvidersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/results': {
+      id: '/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking/$resourceId': {
+      id: '/booking/$resourceId'
+      path: '/booking/$resourceId'
+      fullPath: '/booking/$resourceId'
+      preLoaderRoute: typeof BookingResourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/negotiation/$resourceId': {
+      id: '/negotiation/$resourceId'
+      path: '/negotiation/$resourceId'
+      fullPath: '/negotiation/$resourceId'
+      preLoaderRoute: typeof NegotiationResourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/$business': {
+      id: '/profile/$business'
+      path: '/profile/$business'
+      fullPath: '/profile/$business'
+      preLoaderRoute: typeof ProfileBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/request/$resourceId': {
+      id: '/request/$resourceId'
+      path: '/request/$resourceId'
+      fullPath: '/request/$resourceId'
+      preLoaderRoute: typeof RequestResourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resource/$resourceId': {
+      id: '/resource/$resourceId'
+      path: '/resource/$resourceId'
+      fullPath: '/resource/$resourceId'
+      preLoaderRoute: typeof ResourceResourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  ForProvidersRoute: ForProvidersRoute,
+  HowItWorksRoute: HowItWorksRoute,
+  LoginRoute: LoginRoute,
+  ResultsRoute: ResultsRoute,
+  SearchRoute: SearchRoute,
+  BookingResourceIdRoute: BookingResourceIdRoute,
+  NegotiationResourceIdRoute: NegotiationResourceIdRoute,
+  ProfileBusinessRoute: ProfileBusinessRoute,
+  RequestResourceIdRoute: RequestResourceIdRoute,
+  ResourceResourceIdRoute: ResourceResourceIdRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
