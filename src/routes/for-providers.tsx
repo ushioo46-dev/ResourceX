@@ -22,7 +22,7 @@ export const Route = createFileRoute("/for-providers")({
       },
     ],
   }),
-  component: ForProviders;
+  component: ForProviders,
 });
 
 function ForProviders() {
