@@ -18,6 +18,7 @@ import { Route as ResultsRouteImport } from './routes/results'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as BookingResourceIdRouteImport } from './routes/booking.$resourceId'
 import { Route as NegotiationResourceIdRouteImport } from './routes/negotiation.$resourceId'
+import { Route as ProfileBusinessRouteImport } from './routes/profile.$business'
 import { Route as RequestResourceIdRouteImport } from './routes/request.$resourceId'
 import { Route as ResourceResourceIdRouteImport } from './routes/resource.$resourceId'
 
@@ -66,6 +67,11 @@ const NegotiationResourceIdRoute = NegotiationResourceIdRouteImport.update({
   path: '/negotiation/$resourceId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileBusinessRoute = ProfileBusinessRouteImport.update({
+  id: '/profile/$business',
+  path: '/profile/$business',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RequestResourceIdRoute = RequestResourceIdRouteImport.update({
   id: '/request/$resourceId',
   path: '/request/$resourceId',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
+  '/profile/$business': typeof ProfileBusinessRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
+  '/profile/$business': typeof ProfileBusinessRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
+  '/profile/$business': typeof ProfileBusinessRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
   '/resource/$resourceId': typeof ResourceResourceIdRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/booking/$resourceId'
     | '/negotiation/$resourceId'
+    | '/profile/$business'
     | '/request/$resourceId'
     | '/resource/$resourceId'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/booking/$resourceId'
     | '/negotiation/$resourceId'
+    | '/profile/$business'
     | '/request/$resourceId'
     | '/resource/$resourceId'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/booking/$resourceId'
     | '/negotiation/$resourceId'
+    | '/profile/$business'
     | '/request/$resourceId'
     | '/resource/$resourceId'
   fileRoutesById: FileRoutesById
@@ -169,6 +181,7 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   BookingResourceIdRoute: typeof BookingResourceIdRoute
   NegotiationResourceIdRoute: typeof NegotiationResourceIdRoute
+  ProfileBusinessRoute: typeof ProfileBusinessRoute
   RequestResourceIdRoute: typeof RequestResourceIdRoute
   ResourceResourceIdRoute: typeof ResourceResourceIdRoute
 }
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NegotiationResourceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/$business': {
+      id: '/profile/$business'
+      path: '/profile/$business'
+      fullPath: '/profile/$business'
+      preLoaderRoute: typeof ProfileBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/request/$resourceId': {
       id: '/request/$resourceId'
       path: '/request/$resourceId'
@@ -265,6 +285,7 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   BookingResourceIdRoute: BookingResourceIdRoute,
   NegotiationResourceIdRoute: NegotiationResourceIdRoute,
+  ProfileBusinessRoute: ProfileBusinessRoute,
   RequestResourceIdRoute: RequestResourceIdRoute,
   ResourceResourceIdRoute: ResourceResourceIdRoute,
 }
