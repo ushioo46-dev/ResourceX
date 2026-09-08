@@ -20,6 +20,7 @@ import { Route as BookingResourceIdRouteImport } from './routes/booking.$resourc
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardAddResourceRouteImport } from './routes/dashboard.add-resource'
 import { Route as DashboardAvailabilityRouteImport } from './routes/dashboard.availability'
+import { Route as DashboardBookingsRouteImport } from './routes/dashboard.bookings'
 import { Route as DashboardRequestsRouteImport } from './routes/dashboard.requests'
 import { Route as DashboardResourcesRouteImport } from './routes/dashboard.resources'
 import { Route as NegotiationResourceIdRouteImport } from './routes/negotiation.$resourceId'
@@ -82,6 +83,11 @@ const DashboardAvailabilityRoute = DashboardAvailabilityRouteImport.update({
   path: '/dashboard/availability',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardBookingsRoute = DashboardBookingsRouteImport.update({
+  id: '/dashboard/bookings',
+  path: '/dashboard/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRequestsRoute = DashboardRequestsRouteImport.update({
   id: '/dashboard/requests',
   path: '/dashboard/requests',
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/booking/$resourceId': typeof BookingResourceIdRoute
   '/dashboard/add-resource': typeof DashboardAddResourceRoute
   '/dashboard/availability': typeof DashboardAvailabilityRoute
+  '/dashboard/bookings': typeof DashboardBookingsRoute
   '/dashboard/requests': typeof DashboardRequestsRoute
   '/dashboard/resources': typeof DashboardResourcesRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/booking/$resourceId': typeof BookingResourceIdRoute
   '/dashboard/add-resource': typeof DashboardAddResourceRoute
   '/dashboard/availability': typeof DashboardAvailabilityRoute
+  '/dashboard/bookings': typeof DashboardBookingsRoute
   '/dashboard/requests': typeof DashboardRequestsRoute
   '/dashboard/resources': typeof DashboardResourcesRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/booking/$resourceId': typeof BookingResourceIdRoute
   '/dashboard/add-resource': typeof DashboardAddResourceRoute
   '/dashboard/availability': typeof DashboardAvailabilityRoute
+  '/dashboard/bookings': typeof DashboardBookingsRoute
   '/dashboard/requests': typeof DashboardRequestsRoute
   '/dashboard/resources': typeof DashboardResourcesRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/booking/$resourceId'
     | '/dashboard/add-resource'
     | '/dashboard/availability'
+    | '/dashboard/bookings'
     | '/dashboard/requests'
     | '/dashboard/resources'
     | '/negotiation/$resourceId'
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
     | '/booking/$resourceId'
     | '/dashboard/add-resource'
     | '/dashboard/availability'
+    | '/dashboard/bookings'
     | '/dashboard/requests'
     | '/dashboard/resources'
     | '/negotiation/$resourceId'
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/booking/$resourceId'
     | '/dashboard/add-resource'
     | '/dashboard/availability'
+    | '/dashboard/bookings'
     | '/dashboard/requests'
     | '/dashboard/resources'
     | '/negotiation/$resourceId'
@@ -242,6 +254,7 @@ export interface RootRouteChildren {
   BookingResourceIdRoute: typeof BookingResourceIdRoute
   DashboardAddResourceRoute: typeof DashboardAddResourceRoute
   DashboardAvailabilityRoute: typeof DashboardAvailabilityRoute
+  DashboardBookingsRoute: typeof DashboardBookingsRoute
   DashboardRequestsRoute: typeof DashboardRequestsRoute
   DashboardResourcesRoute: typeof DashboardResourcesRoute
   NegotiationResourceIdRoute: typeof NegotiationResourceIdRoute
@@ -330,6 +343,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAvailabilityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/bookings': {
+      id: '/dashboard/bookings'
+      path: '/dashboard/bookings'
+      fullPath: '/dashboard/bookings'
+      preLoaderRoute: typeof DashboardBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/requests': {
       id: '/dashboard/requests'
       path: '/dashboard/requests'
@@ -386,6 +406,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingResourceIdRoute: BookingResourceIdRoute,
   DashboardAddResourceRoute: DashboardAddResourceRoute,
   DashboardAvailabilityRoute: DashboardAvailabilityRoute,
+  DashboardBookingsRoute: DashboardBookingsRoute,
   DashboardRequestsRoute: DashboardRequestsRoute,
   DashboardResourcesRoute: DashboardResourcesRoute,
   NegotiationResourceIdRoute: NegotiationResourceIdRoute,
