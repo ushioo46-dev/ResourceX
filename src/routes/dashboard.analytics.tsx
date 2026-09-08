@@ -36,7 +36,7 @@ export const Route = createFileRoute("/dashboard/analytics")({
       { property: "og:description", content: "See which idle resources earn and which sit unused." },
     ],
   }),
-  component: Analytics;
+  component: Analytics,
 });
 
 const tooltipStyle = {
