@@ -18,6 +18,7 @@ import { Route as ResultsRouteImport } from './routes/results'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as BookingResourceIdRouteImport } from './routes/booking.$resourceId'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardAddResourceRouteImport } from './routes/dashboard.add-resource'
 import { Route as DashboardResourcesRouteImport } from './routes/dashboard.resources'
 import { Route as NegotiationResourceIdRouteImport } from './routes/negotiation.$resourceId'
 import { Route as ProfileBusinessRouteImport } from './routes/profile.$business'
@@ -69,6 +70,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardAddResourceRoute = DashboardAddResourceRouteImport.update({
+  id: '/dashboard/add-resource',
+  path: '/dashboard/add-resource',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardResourcesRoute = DashboardResourcesRouteImport.update({
   id: '/dashboard/resources',
   path: '/dashboard/resources',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
+  '/dashboard/add-resource': typeof DashboardAddResourceRoute
   '/dashboard/resources': typeof DashboardResourcesRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/profile/$business': typeof ProfileBusinessRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
+  '/dashboard/add-resource': typeof DashboardAddResourceRoute
   '/dashboard/resources': typeof DashboardResourcesRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/profile/$business': typeof ProfileBusinessRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/results': typeof ResultsRoute
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
+  '/dashboard/add-resource': typeof DashboardAddResourceRoute
   '/dashboard/resources': typeof DashboardResourcesRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/profile/$business': typeof ProfileBusinessRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/search'
     | '/booking/$resourceId'
+    | '/dashboard/add-resource'
     | '/dashboard/resources'
     | '/negotiation/$resourceId'
     | '/profile/$business'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/search'
     | '/booking/$resourceId'
+    | '/dashboard/add-resource'
     | '/dashboard/resources'
     | '/negotiation/$resourceId'
     | '/profile/$business'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/results'
     | '/search'
     | '/booking/$resourceId'
+    | '/dashboard/add-resource'
     | '/dashboard/resources'
     | '/negotiation/$resourceId'
     | '/profile/$business'
@@ -204,6 +216,7 @@ export interface RootRouteChildren {
   ResultsRoute: typeof ResultsRoute
   SearchRoute: typeof SearchRoute
   BookingResourceIdRoute: typeof BookingResourceIdRoute
+  DashboardAddResourceRoute: typeof DashboardAddResourceRoute
   DashboardResourcesRoute: typeof DashboardResourcesRoute
   NegotiationResourceIdRoute: typeof NegotiationResourceIdRoute
   ProfileBusinessRoute: typeof ProfileBusinessRoute
@@ -277,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/add-resource': {
+      id: '/dashboard/add-resource'
+      path: '/dashboard/add-resource'
+      fullPath: '/dashboard/add-resource'
+      preLoaderRoute: typeof DashboardAddResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/resources': {
       id: '/dashboard/resources'
       path: '/dashboard/resources'
@@ -324,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResultsRoute: ResultsRoute,
   SearchRoute: SearchRoute,
   BookingResourceIdRoute: BookingResourceIdRoute,
+  DashboardAddResourceRoute: DashboardAddResourceRoute,
   DashboardResourcesRoute: DashboardResourcesRoute,
   NegotiationResourceIdRoute: NegotiationResourceIdRoute,
   ProfileBusinessRoute: ProfileBusinessRoute,
