@@ -19,6 +19,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as BookingResourceIdRouteImport } from './routes/booking.$resourceId'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardAddResourceRouteImport } from './routes/dashboard.add-resource'
+import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard.analytics'
 import { Route as DashboardAvailabilityRouteImport } from './routes/dashboard.availability'
 import { Route as DashboardBookingsRouteImport } from './routes/dashboard.bookings'
 import { Route as DashboardRequestsRouteImport } from './routes/dashboard.requests'
@@ -78,6 +79,11 @@ const DashboardAddResourceRoute = DashboardAddResourceRouteImport.update({
   path: '/dashboard/add-resource',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
+  id: '/dashboard/analytics',
+  path: '/dashboard/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardAvailabilityRoute = DashboardAvailabilityRouteImport.update({
   id: '/dashboard/availability',
   path: '/dashboard/availability',
@@ -129,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
   '/dashboard/add-resource': typeof DashboardAddResourceRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/availability': typeof DashboardAvailabilityRoute
   '/dashboard/bookings': typeof DashboardBookingsRoute
   '/dashboard/requests': typeof DashboardRequestsRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
   '/dashboard/add-resource': typeof DashboardAddResourceRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/availability': typeof DashboardAvailabilityRoute
   '/dashboard/bookings': typeof DashboardBookingsRoute
   '/dashboard/requests': typeof DashboardRequestsRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/booking/$resourceId': typeof BookingResourceIdRoute
   '/dashboard/add-resource': typeof DashboardAddResourceRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/availability': typeof DashboardAvailabilityRoute
   '/dashboard/bookings': typeof DashboardBookingsRoute
   '/dashboard/requests': typeof DashboardRequestsRoute
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/booking/$resourceId'
     | '/dashboard/add-resource'
+    | '/dashboard/analytics'
     | '/dashboard/availability'
     | '/dashboard/bookings'
     | '/dashboard/requests'
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/booking/$resourceId'
     | '/dashboard/add-resource'
+    | '/dashboard/analytics'
     | '/dashboard/availability'
     | '/dashboard/bookings'
     | '/dashboard/requests'
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/booking/$resourceId'
     | '/dashboard/add-resource'
+    | '/dashboard/analytics'
     | '/dashboard/availability'
     | '/dashboard/bookings'
     | '/dashboard/requests'
@@ -253,6 +265,7 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   BookingResourceIdRoute: typeof BookingResourceIdRoute
   DashboardAddResourceRoute: typeof DashboardAddResourceRoute
+  DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
   DashboardAvailabilityRoute: typeof DashboardAvailabilityRoute
   DashboardBookingsRoute: typeof DashboardBookingsRoute
   DashboardRequestsRoute: typeof DashboardRequestsRoute
@@ -336,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAddResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/analytics': {
+      id: '/dashboard/analytics'
+      path: '/dashboard/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof DashboardAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/availability': {
       id: '/dashboard/availability'
       path: '/dashboard/availability'
@@ -405,6 +425,7 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   BookingResourceIdRoute: BookingResourceIdRoute,
   DashboardAddResourceRoute: DashboardAddResourceRoute,
+  DashboardAnalyticsRoute: DashboardAnalyticsRoute,
   DashboardAvailabilityRoute: DashboardAvailabilityRoute,
   DashboardBookingsRoute: DashboardBookingsRoute,
   DashboardRequestsRoute: DashboardRequestsRoute,
