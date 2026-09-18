@@ -26,6 +26,7 @@ import { Route as DashboardNotificationsRouteImport } from './routes/dashboard.n
 import { Route as DashboardProfileRouteImport } from './routes/dashboard.profile'
 import { Route as DashboardRequestsRouteImport } from './routes/dashboard.requests'
 import { Route as DashboardResourcesRouteImport } from './routes/dashboard.resources'
+import { Route as DashboardVerifyRouteImport } from './routes/dashboard.verify'
 import { Route as NegotiationResourceIdRouteImport } from './routes/negotiation.$resourceId'
 import { Route as ProfileBusinessRouteImport } from './routes/profile.$business'
 import { Route as RequestResourceIdRouteImport } from './routes/request.$resourceId'
@@ -116,6 +117,11 @@ const DashboardResourcesRoute = DashboardResourcesRouteImport.update({
   path: '/dashboard/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardVerifyRoute = DashboardVerifyRouteImport.update({
+  id: '/dashboard/verify',
+  path: '/dashboard/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NegotiationResourceIdRoute = NegotiationResourceIdRouteImport.update({
   id: '/negotiation/$resourceId',
   path: '/negotiation/$resourceId',
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/requests': typeof DashboardRequestsRoute
   '/dashboard/resources': typeof DashboardResourcesRoute
+  '/dashboard/verify': typeof DashboardVerifyRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/profile/$business': typeof ProfileBusinessRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/requests': typeof DashboardRequestsRoute
   '/dashboard/resources': typeof DashboardResourcesRoute
+  '/dashboard/verify': typeof DashboardVerifyRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/profile/$business': typeof ProfileBusinessRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/requests': typeof DashboardRequestsRoute
   '/dashboard/resources': typeof DashboardResourcesRoute
+  '/dashboard/verify': typeof DashboardVerifyRoute
   '/negotiation/$resourceId': typeof NegotiationResourceIdRoute
   '/profile/$business': typeof ProfileBusinessRoute
   '/request/$resourceId': typeof RequestResourceIdRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/requests'
     | '/dashboard/resources'
+    | '/dashboard/verify'
     | '/negotiation/$resourceId'
     | '/profile/$business'
     | '/request/$resourceId'
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/requests'
     | '/dashboard/resources'
+    | '/dashboard/verify'
     | '/negotiation/$resourceId'
     | '/profile/$business'
     | '/request/$resourceId'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/requests'
     | '/dashboard/resources'
+    | '/dashboard/verify'
     | '/negotiation/$resourceId'
     | '/profile/$business'
     | '/request/$resourceId'
@@ -296,6 +308,7 @@ export interface RootRouteChildren {
   DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardRequestsRoute: typeof DashboardRequestsRoute
   DashboardResourcesRoute: typeof DashboardResourcesRoute
+  DashboardVerifyRoute: typeof DashboardVerifyRoute
   NegotiationResourceIdRoute: typeof NegotiationResourceIdRoute
   ProfileBusinessRoute: typeof ProfileBusinessRoute
   RequestResourceIdRoute: typeof RequestResourceIdRoute
@@ -424,6 +437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardResourcesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/verify': {
+      id: '/dashboard/verify'
+      path: '/dashboard/verify'
+      fullPath: '/dashboard/verify'
+      preLoaderRoute: typeof DashboardVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/negotiation/$resourceId': {
       id: '/negotiation/$resourceId'
       path: '/negotiation/$resourceId'
@@ -472,6 +492,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardProfileRoute: DashboardProfileRoute,
   DashboardRequestsRoute: DashboardRequestsRoute,
   DashboardResourcesRoute: DashboardResourcesRoute,
+  DashboardVerifyRoute: DashboardVerifyRoute,
   NegotiationResourceIdRoute: NegotiationResourceIdRoute,
   ProfileBusinessRoute: ProfileBusinessRoute,
   RequestResourceIdRoute: RequestResourceIdRoute,
