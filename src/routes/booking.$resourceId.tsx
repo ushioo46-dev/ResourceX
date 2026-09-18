@@ -72,8 +72,15 @@ function BookingConfirmed() {
                 ["Provider", listing.provider],
                 ["Date", "15 September 2026"],
                 ["Time window", "5:00 PM – 11:00 PM"],
-                ["Agreed price", inr(7500)],
-                ["Payment", "Settled offline between businesses"],
+                ["Agreed price", inr(amount)],
+                [
+                  "Payment",
+                  escrow
+                    ? state.escrowReleased
+                      ? "Released from ResourceX Escrow"
+                      : "Held in ResourceX Escrow"
+                    : "Settled offline between businesses",
+                ],
               ] as const
             ).map(([k, v]) => (
               <div key={k} className="min-w-0 rounded-xl border border-border bg-surface px-4 py-3">
@@ -82,6 +89,56 @@ function BookingConfirmed() {
               </div>
             ))}
           </dl>
+
+          {escrow && (
+            <div className="mt-6 rounded-xl border border-primary/30 bg-primary/8 p-5">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                <p className="flex min-w-0 items-center gap-2 text-sm font-bold text-primary">
+                  <ShieldCheck className="h-4 w-4 shrink-0" /> ResourceX Escrow
+                </p>
+                <StatusPill
+                  status={state.escrowReleased ? "Released" : "Held in Escrow"}
+                  className="shrink-0"
+                />
+              </div>
+              <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+                <div>
+                  <dt className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Amount held
+                  </dt>
+                  <dd className="mt-1 text-lg font-extrabold text-foreground tabular-nums">
+                    {inr(amount)}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Released to provider
+                  </dt>
+                  <dd className="mt-1 text-sm text-muted-foreground">
+                    After delivery is confirmed by both parties
+                  </dd>
+                </div>
+              </dl>
+              {!state.escrowReleased && (
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => {
+                    demoStore.set({ escrowReleased: true });
+                    toast.success("Delivery confirmed", {
+                      description: `${inr(amount)} released to ${listing.provider}.`,
+                    });
+                  }}
+                >
+                  Confirm delivery & release funds
+                </Button>
+              )}
+              <p className="mt-3 text-[10px] text-muted-foreground/80">
+                Prototype escrow flow — money movement is simulated for the demo.
+              </p>
+            </div>
+          )}
+
 
           <div className="mt-6 space-y-3 text-sm text-muted-foreground">
             <p className="flex items-center gap-2">
