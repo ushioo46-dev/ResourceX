@@ -1,13 +1,18 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { CheckCircle2, IndianRupee, Send } from "lucide-react";
+import { CheckCircle2, IndianRupee, Send, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { StatusPill } from "@/components/resourcex/StatusPill";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { demoStore, termsForCategory, type PaymentMethod } from "@/lib/demo-store";
 import { getListing, inr } from "@/lib/resourcex-data";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/negotiation/$resourceId")({
   loader: ({ params }) => {
@@ -41,6 +46,10 @@ function Negotiation() {
   const { listing } = Route.useLoaderData();
   const navigate = useNavigate();
   const [agreed, setAgreed] = useState<number | null>(null);
+  const [payment, setPayment] = useState<PaymentMethod>("escrow");
+  const [termsOk, setTermsOk] = useState(false);
+  const terms = termsForCategory(listing.category);
+
   const [draft, setDraft] = useState("");
   const [counter, setCounter] = useState(7000);
   const [thread, setThread] = useState<Msg[]>([
@@ -169,20 +178,131 @@ function Negotiation() {
             </Button>
 
             {agreed && (
-              <div className="mt-5 rounded-xl border border-primary/30 bg-primary/8 p-4">
-                <p className="flex items-center gap-2 text-sm font-bold text-primary">
-                  <CheckCircle2 className="h-4 w-4" /> Agreed at {inr(agreed)}
-                </p>
+              <div className="mt-5 space-y-5">
+                <div className="rounded-xl border border-primary/30 bg-primary/8 p-4">
+                  <p className="flex items-center gap-2 text-sm font-bold text-primary">
+                    <CheckCircle2 className="h-4 w-4" /> Agreed at {inr(agreed)}
+                  </p>
+                </div>
+
+                <div>
+                  <h2 className="text-sm font-bold text-foreground">Payment</h2>
+                  <RadioGroup
+                    className="mt-3 gap-2"
+                    value={payment}
+                    onValueChange={(v) => setPayment(v as PaymentMethod)}
+                  >
+                    {(
+                      [
+                        ["escrow", "Pay via ResourceX Escrow"],
+                        ["offline", "Settle Offline Between Businesses"],
+                      ] as const
+                    ).map(([value, label]) => (
+                      <Label
+                        key={value}
+                        className={cn(
+                          "flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-3 text-xs font-semibold transition-colors",
+                          payment === value
+                            ? "border-primary/50 bg-primary/8 text-foreground"
+                            : "border-border bg-surface text-muted-foreground hover:border-primary/30",
+                        )}
+                      >
+                        <RadioGroupItem value={value} className="shrink-0" />
+                        <span className="min-w-0">{label}</span>
+                      </Label>
+                    ))}
+                  </RadioGroup>
+
+                  {payment === "escrow" ? (
+                    <div className="mt-3 rounded-xl border border-primary/30 bg-surface p-4">
+                      <p className="flex items-center gap-2 text-xs font-bold text-primary">
+                        <ShieldCheck className="h-4 w-4" /> ResourceX Escrow
+                      </p>
+                      <dl className="mt-3 space-y-2.5 text-xs">
+                        <div>
+                          <dt className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                            Amount held
+                          </dt>
+                          <dd className="mt-0.5 text-base font-extrabold text-foreground tabular-nums">
+                            {inr(agreed)}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                            Released to provider
+                          </dt>
+                          <dd className="mt-0.5 text-muted-foreground">
+                            After delivery is confirmed by both parties
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                            Status
+                          </dt>
+                          <dd className="mt-1">
+                            <StatusPill status="Held in Escrow" />
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
+                  ) : (
+                    <p className="mt-3 rounded-xl border border-border bg-surface p-4 text-xs text-muted-foreground">
+                      Settled offline between businesses.
+                    </p>
+                  )}
+                  <p className="mt-2 text-[10px] text-muted-foreground/80">
+                    Prototype escrow flow — money movement is simulated for the demo.
+                  </p>
+                </div>
+
+                <div>
+                  <h2 className="text-sm font-bold text-foreground">Booking Terms</h2>
+                  <ul className="mt-3 space-y-2 rounded-xl border border-border bg-surface p-4 text-[11px] leading-relaxed text-muted-foreground">
+                    {terms.map((t) => (
+                      <li key={t} className="flex gap-2">
+                        <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-primary" />
+                        <span className="min-w-0">{t}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Label className="mt-3 flex cursor-pointer items-start gap-3 text-xs font-semibold text-foreground">
+                    <Checkbox
+                      checked={termsOk}
+                      onCheckedChange={(v) => setTermsOk(v === true)}
+                      className="mt-0.5 shrink-0"
+                    />
+                    <span className="min-w-0">I agree to the rental terms for this booking.</span>
+                  </Label>
+                </div>
+
                 <Button
-                  className="mt-3 w-full"
-                  onClick={() =>
-                    navigate({ to: "/booking/$resourceId", params: { resourceId: listing.id } })
-                  }
+                  className="w-full"
+                  disabled={!termsOk}
+                  onClick={() => {
+                    demoStore.set({
+                      paymentMethod: payment,
+                      escrowAmount: agreed,
+                      termsAccepted: true,
+                      escrowReleased: false,
+                    });
+                    demoStore.recordBooking({
+                      resource: listing.name,
+                      amount: agreed,
+                      utilizationBoost: 8,
+                    });
+                    navigate({ to: "/booking/$resourceId", params: { resourceId: listing.id } });
+                  }}
                 >
-                  Accept & confirm booking
+                  Confirm booking
                 </Button>
+                {!termsOk && (
+                  <p className="text-center text-[11px] text-muted-foreground">
+                    Agree to the rental terms to enable confirmation.
+                  </p>
+                )}
               </div>
             )}
+
 
             <Link
               to="/resource/$resourceId"
