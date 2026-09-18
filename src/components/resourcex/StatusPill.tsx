@@ -12,7 +12,13 @@ const tone: Record<string, string> = {
   Cancelled: "border-destructive/40 bg-destructive/10 text-destructive",
   Active: "border-primary/40 bg-primary/10 text-primary",
   Paused: "border-border bg-secondary text-muted-foreground",
+  "Held in Escrow": "border-primary/40 bg-primary/10 text-primary",
+  Released: "border-primary/40 bg-primary/10 text-primary",
+  Verified: "border-primary/40 bg-primary/10 text-primary",
+  "Pending Verification": "border-warning/40 bg-warning/10 text-warning",
+  Unverified: "border-border bg-secondary text-muted-foreground",
 };
+
 
 export function StatusPill({ status, className }: { status: string; className?: string }) {
   return (
