@@ -1,13 +1,18 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { CheckCircle2, IndianRupee, Send } from "lucide-react";
+import { CheckCircle2, IndianRupee, Send, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { StatusPill } from "@/components/resourcex/StatusPill";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { demoStore, termsForCategory, type PaymentMethod } from "@/lib/demo-store";
 import { getListing, inr } from "@/lib/resourcex-data";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/negotiation/$resourceId")({
   loader: ({ params }) => {
