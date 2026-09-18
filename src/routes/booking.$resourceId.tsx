@@ -36,6 +36,10 @@ export const Route = createFileRoute("/booking/$resourceId")({
 
 function BookingConfirmed() {
   const { listing } = Route.useLoaderData();
+  const state = useDemoState();
+  const escrow = state.paymentMethod === "escrow";
+  const amount = state.escrowAmount || 7500;
+
 
   return (
     <div className="min-h-screen bg-background">
