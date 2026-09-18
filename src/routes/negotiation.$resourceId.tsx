@@ -46,6 +46,10 @@ function Negotiation() {
   const { listing } = Route.useLoaderData();
   const navigate = useNavigate();
   const [agreed, setAgreed] = useState<number | null>(null);
+  const [payment, setPayment] = useState<PaymentMethod>("escrow");
+  const [termsOk, setTermsOk] = useState(false);
+  const terms = termsForCategory(listing.category);
+
   const [draft, setDraft] = useState("");
   const [counter, setCounter] = useState(7000);
   const [thread, setThread] = useState<Msg[]>([
