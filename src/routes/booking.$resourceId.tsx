@@ -1,9 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { CalendarCheck, CheckCircle2, Download, MapPin, Truck } from "lucide-react";
+import { CalendarCheck, CheckCircle2, Download, MapPin, ShieldCheck, Truck } from "lucide-react";
+import { toast } from "sonner";
 import { StatusPill } from "@/components/resourcex/StatusPill";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Button } from "@/components/ui/button";
+import { demoStore, useDemoState } from "@/lib/demo-store";
 import { getListing, inr } from "@/lib/resourcex-data";
+
 
 export const Route = createFileRoute("/booking/$resourceId")({
   loader: ({ params }) => {
