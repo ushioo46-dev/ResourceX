@@ -38,26 +38,35 @@ export const Route = createFileRoute("/dashboard/add-resource")({
 
 function AddResource() {
   const navigate = useNavigate();
+  const { edit } = Route.useSearch();
   const [category, setCategory] = useState<string>("Seating");
   const [delivery, setDelivery] = useState(true);
   const [instant, setInstant] = useState(false);
 
   const save = () => {
-    toast.success("Resource listed", {
+    toast.success(edit ? "Listing updated" : "Resource listed", {
       description: "It is now discoverable to nearby businesses searching for this category.",
     });
     navigate({ to: "/dashboard/resources" });
   };
 
   return (
-    <DashboardShell title="Add Resource" subtitle="List idle inventory and start earning from it">
+    <DashboardShell
+      title={edit ? `Edit ${edit}` : "Add Resource"}
+      subtitle={
+        edit
+          ? "Adjust pricing and availability to lift utilisation"
+          : "List idle inventory and start earning from it"
+      }
+    >
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="panel space-y-5 p-5 sm:p-6">
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <Label>Resource name</Label>
-              <Input className="mt-2" placeholder="Banquet chairs (cushioned, gold frame)" />
+              <Input className="mt-2" defaultValue={edit ?? ""} placeholder="Banquet chairs (cushioned, gold frame)" />
             </div>
+
             <div>
               <Label>Category</Label>
               <Select value={category} onValueChange={setCategory}>
