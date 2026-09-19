@@ -49,15 +49,22 @@ const tooltipStyle = {
 };
 
 function Analytics() {
-  const best = [...resourcePerformance].sort((a, b) => b.utilization - a.utilization)[0]!;
-  const worst = [...resourcePerformance].sort((a, b) => a.utilization - b.utilization)[0]!;
+  const demo = useDemoState();
+  const totals = liveTotals(demo);
+  const series = liveUtilizationSeries(demo);
+  const perf = totals.performance;
+  const best = [...perf].sort((a, b) => b.utilization - a.utilization)[0]!;
+  const worst = [...perf].sort((a, b) => a.utilization - b.utilization)[0]!;
+  const sixMonthRevenue = series.reduce((s, r) => s + r.revenue, 0);
 
   return (
     <DashboardShell title="Analytics" subtitle="April – September 2026 · demo data">
+      <UtilizationCallout className="mb-6" />
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Avg utilisation", "66%"],
-          ["Revenue (6 mo)", inr(793000)],
+          ["Avg utilisation", `${totals.avgUtilization}%`],
+          ["Revenue (6 mo)", inr(sixMonthRevenue)],
           ["Best performer", `${best.resource} · ${best.utilization}%`],
           ["Needs attention", `${worst.resource} · ${worst.utilization}%`],
         ].map(([k, v]) => (
@@ -67,6 +74,7 @@ function Analytics() {
           </div>
         ))}
       </div>
+
 
       <div className="mt-6 grid gap-6 xl:grid-cols-2">
         <div className="panel p-5">
