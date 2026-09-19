@@ -17,6 +17,10 @@ import {
 import { categories, cities } from "@/lib/resourcex-data";
 
 export const Route = createFileRoute("/dashboard/add-resource")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    edit: typeof search["edit"] === "string" ? (search["edit"] as string) : undefined,
+  }),
+
   head: () => ({
     meta: [
       { title: "Add a Resource — ResourceX Provider" },
