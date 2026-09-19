@@ -78,10 +78,13 @@ function MyResources() {
                   <StatusPill status={r.status} />
                 </td>
                 <td className="px-5 py-4 text-right">
-                  <Button variant="ghost" size="sm">
-                    Edit
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/dashboard/add-resource" search={{ edit: r.resource }}>
+                      Edit
+                    </Link>
                   </Button>
                 </td>
+
               </tr>
             ))}
           </tbody>
