@@ -24,10 +24,12 @@ export const Route = createFileRoute("/dashboard/resources")({
 });
 
 function MyResources() {
+  const demo = useDemoState();
+  const { performance, lowUtilization } = liveTotals(demo);
   return (
     <DashboardShell
       title="My Resources"
-      subtitle="6 listed resources · 2 categories running below 50% utilisation"
+      subtitle={`${performance.length} listed resources · ${lowUtilization.length} below 50% utilisation`}
       actions={
         <Button asChild>
           <Link to="/dashboard/add-resource">
@@ -36,7 +38,10 @@ function MyResources() {
         </Button>
       }
     >
+      <UtilizationCallout className="mb-6" />
+
       <div className="panel overflow-x-auto">
+
         <table className="w-full min-w-[820px] text-sm">
           <thead>
             <tr className="border-b border-border text-left text-[11px] uppercase tracking-wider text-muted-foreground">
