@@ -65,9 +65,10 @@ export function GoogleMapPanel({
           </span>
         </div>
         <span className="shrink-0 rounded-md border border-border px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary">
-          {BROWSER_KEY ? "Live" : "Key not configured"}
+          {listings.length} within 25 km
         </span>
       </div>
+
 
       <div className="relative h-[360px] lg:h-[calc(100%-49px)]">
         {positions.map((p) => {
