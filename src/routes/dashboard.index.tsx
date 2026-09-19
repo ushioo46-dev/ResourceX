@@ -39,11 +39,24 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 function DashboardHome() {
+  const demo = useDemoState();
+  const totals = liveTotals(demo);
+  const series = liveUtilizationSeries(demo);
   const stats = [
     { label: "Active resources", value: "6", icon: Package, delta: "+1 this month" },
     { label: "Open requests", value: String(incomingRequests.length), icon: Inbox, delta: "3 need a reply" },
-    { label: "Utilisation", value: "78%", icon: TrendingUp, delta: "+4% vs Aug" },
-    { label: "Revenue (Sep)", value: inr(182000), icon: IndianRupee, delta: "+13% vs Aug" },
+    {
+      label: "Utilisation",
+      value: `${totals.avgUtilization}%`,
+      icon: TrendingUp,
+      delta: totals.extraBookings ? `+${totals.extraBookings} booking this session` : "+4% vs Aug",
+    },
+    {
+      label: "Revenue (Sep)",
+      value: inr(totals.septRevenue),
+      icon: IndianRupee,
+      delta: totals.extraBookings ? "Updated with live booking" : "+13% vs Aug",
+    },
   ];
 
   return (
@@ -56,7 +69,10 @@ function DashboardHome() {
         </Button>
       }
     >
+      <UtilizationCallout className="mb-6" />
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
         {stats.map((s) => (
           <div key={s.label} className="panel p-5">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
