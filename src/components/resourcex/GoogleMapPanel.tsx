@@ -117,17 +117,17 @@ export function GoogleMapPanel({
           </div>
         )}
 
-        {!BROWSER_KEY && !active && (
-          <div className="pointer-events-none absolute inset-x-4 bottom-4 rounded-xl border border-dashed border-primary/40 bg-surface/70 p-3 text-center">
+        {!active && (
+          <div className="pointer-events-none absolute inset-x-4 bottom-4 rounded-xl border border-primary/25 bg-surface/70 p-3 text-center">
             <p className="flex items-center justify-center gap-2 text-xs font-semibold text-primary">
-              <Navigation className="h-3.5 w-3.5" /> Google Maps API key placeholder
+              <Navigation className="h-3.5 w-3.5" /> Tap a marker to preview a provider
             </p>
             <p className="mt-1 text-[11px] text-muted-foreground">
-              Connect the Google Maps key to render live tiles, routes and travel time. Markers below
-              use demo provider coordinates.
+              Markers show provider distance, available quantity and match score across Mumbai.
             </p>
           </div>
         )}
+
       </div>
     </div>
   );
