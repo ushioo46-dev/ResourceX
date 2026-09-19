@@ -2,8 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PlusCircle } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { StatusPill } from "@/components/resourcex/StatusPill";
+import { UtilizationCallout } from "@/components/resourcex/UtilizationCallout";
 import { Button } from "@/components/ui/button";
-import { inr, resourcePerformance } from "@/lib/resourcex-data";
+import { liveTotals, useDemoState } from "@/lib/demo-store";
+import { inr } from "@/lib/resourcex-data";
+
 
 export const Route = createFileRoute("/dashboard/resources")({
   head: () => ({

@@ -81,7 +81,7 @@ function Analytics() {
           <h2 className="text-sm font-bold text-foreground">Utilisation & bookings</h2>
           <div className="mt-5 h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={utilizationSeries}>
+              <LineChart data={series}>
                 <CartesianGrid stroke="var(--color-border)" vertical={false} />
                 <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} />
                 <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
@@ -158,7 +158,7 @@ function Analytics() {
           <h2 className="text-sm font-bold text-foreground">Revenue by month</h2>
           <div className="mt-5 h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={utilizationSeries}>
+              <BarChart data={series}>
                 <CartesianGrid stroke="var(--color-border)" vertical={false} />
                 <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} />
                 <YAxis
