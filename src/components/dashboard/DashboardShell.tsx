@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import {
+  BadgeCheck,
   BarChart3,
   Bell,
   Building2,
+
   CalendarRange,
   Inbox,
   LayoutDashboard,
@@ -25,7 +27,9 @@ const items = [
   { label: "Analytics", to: "/dashboard/analytics", icon: BarChart3 },
   { label: "Notifications", to: "/dashboard/notifications", icon: Bell },
   { label: "Business Profile", to: "/dashboard/profile", icon: Building2 },
+  { label: "Get Verified", to: "/dashboard/verify", icon: BadgeCheck },
 ] as const;
+
 
 export function DashboardShell({
   title,

@@ -10,15 +10,17 @@ import {
   YAxis,
 } from "recharts";
 import { StatusPill } from "@/components/resourcex/StatusPill";
+import { UtilizationCallout } from "@/components/resourcex/UtilizationCallout";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { Button } from "@/components/ui/button";
+import { liveTotals, liveUtilizationSeries, useDemoState } from "@/lib/demo-store";
 import {
   bookings,
   incomingRequests,
   inr,
   notifications,
-  utilizationSeries,
 } from "@/lib/resourcex-data";
+
 
 export const Route = createFileRoute("/dashboard/")({
   head: () => ({
