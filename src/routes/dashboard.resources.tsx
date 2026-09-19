@@ -56,7 +56,7 @@ function MyResources() {
             </tr>
           </thead>
           <tbody>
-            {resourcePerformance.map((r) => (
+            {performance.map((r) => (
               <tr key={r.resource} className="border-b border-border/60 last:border-0">
                 <td className="px-5 py-4 font-semibold text-foreground">{r.resource}</td>
                 <td className="px-5 py-4 text-muted-foreground">{r.category}</td>
