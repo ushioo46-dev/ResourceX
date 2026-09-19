@@ -15,13 +15,14 @@ import {
   YAxis,
 } from "recharts";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { UtilizationCallout } from "@/components/resourcex/UtilizationCallout";
+import { liveTotals, liveUtilizationSeries, useDemoState } from "@/lib/demo-store";
 import {
   bookingStatusSeries,
   demandSeries,
   inr,
-  resourcePerformance,
-  utilizationSeries,
 } from "@/lib/resourcex-data";
+
 
 export const Route = createFileRoute("/dashboard/analytics")({
   head: () => ({
