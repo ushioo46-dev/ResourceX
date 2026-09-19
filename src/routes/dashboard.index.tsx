@@ -65,7 +65,7 @@ function DashboardHome() {
       subtitle="Hotel Horizon · Andheri East, Mumbai"
       actions={
         <Button asChild>
-          <Link to="/dashboard/add-resource">Add resource</Link>
+          <Link to="/dashboard/add-resource" search={{ edit: undefined }}>Add resource</Link>
         </Button>
       }
     >
@@ -197,7 +197,7 @@ function DashboardHome() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-foreground">{b.resource}</p>
                   <p className="truncate text-xs text-muted-foreground">
-                    {b.counterparty} · {b.date} · {inr(b.amount)}
+                    {b.business} · {b.date} · {inr(b.amount)}
                   </p>
                 </div>
                 <StatusPill status={b.status} className="shrink-0" />

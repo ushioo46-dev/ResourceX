@@ -41,7 +41,7 @@ function Bookings() {
               <tr key={b.id} className="border-b border-border/60 last:border-0">
                 <td className="px-5 py-4 font-semibold text-foreground">{b.id}</td>
                 <td className="px-5 py-4 text-muted-foreground">{b.resource}</td>
-                <td className="px-5 py-4 text-muted-foreground">{b.counterparty}</td>
+                <td className="px-5 py-4 text-muted-foreground">{b.business}</td>
                 <td className="px-5 py-4 text-muted-foreground">
                   {b.date}
                   <span className="block text-xs text-muted-foreground/70">{b.time}</span>

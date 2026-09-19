@@ -113,7 +113,7 @@ function Landing() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link to="/dashboard/add-resource">List a Resource</Link>
+                <Link to="/dashboard/add-resource" search={{ edit: undefined }}>List a Resource</Link>
               </Button>
             </div>
             <dl className="mt-12 grid max-w-lg grid-cols-3 gap-4">

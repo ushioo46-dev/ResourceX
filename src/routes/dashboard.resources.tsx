@@ -32,7 +32,7 @@ function MyResources() {
       subtitle={`${performance.length} listed resources · ${lowUtilization.length} below 50% utilisation`}
       actions={
         <Button asChild>
-          <Link to="/dashboard/add-resource">
+          <Link to="/dashboard/add-resource" search={{ edit: undefined }}>
             <PlusCircle className="h-4 w-4" /> Add resource
           </Link>
         </Button>

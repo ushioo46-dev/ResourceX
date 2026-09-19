@@ -44,7 +44,7 @@ function ForProviders() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg">
-                <Link to="/dashboard/add-resource">
+                <Link to="/dashboard/add-resource" search={{ edit: undefined }}>
                   Start Listing Resources <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>

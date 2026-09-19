@@ -36,7 +36,7 @@ export function SiteHeader() {
             <Link to="/login">Login</Link>
           </Button>
           <Button asChild size="sm">
-            <Link to="/signup">Get Started</Link>
+            <Link to="/login">Get Started</Link>
           </Button>
         </div>
         <button
@@ -66,7 +66,7 @@ export function SiteHeader() {
               <Link to="/login">Login</Link>
             </Button>
             <Button asChild size="sm" onClick={() => setOpen(false)}>
-              <Link to="/signup">Get Started</Link>
+              <Link to="/login">Get Started</Link>
             </Button>
           </div>
         </div>
