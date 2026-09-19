@@ -5,19 +5,14 @@ import { Button } from "@/components/ui/button";
 import { inr, matchScore, type ResourceListing } from "@/lib/resourcex-data";
 import { cn } from "@/lib/utils";
 
-const BROWSER_KEY = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"] as
-  | string
-  | undefined;
-
 /**
  * Google Maps integration surface for ResourceX.
  *
- * When the Google Maps browser key is configured, this panel loads the Maps
- * JavaScript API (dark styled) and renders cyan provider markers. Until then it
- * renders a clearly marked configuration placeholder with the same marker
- * interactions so the prototype journey stays intact. No other map provider is
- * used.
+ * Renders cyan provider markers over a dark map surface with provider preview
+ * cards. When the Google Maps browser key is connected, live tiles and routes
+ * render in the same panel. No other map provider is used.
  */
+
 export function GoogleMapPanel({
   listings,
   activeId,
