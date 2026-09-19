@@ -102,7 +102,7 @@ function DashboardHome() {
           </div>
           <div className="mt-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={utilizationSeries}>
+              <AreaChart data={series}>
                 <defs>
                   <linearGradient id="rxUtil" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.5} />
@@ -140,7 +140,7 @@ function DashboardHome() {
             {notifications.map((n) => (
               <li key={n.id} className="rounded-xl border border-border bg-surface px-4 py-3">
                 <p className="text-sm font-semibold text-foreground">{n.title}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{n.body}</p>
+                <p className="mt-1 text-xs text-muted-foreground capitalize">{n.kind}</p>
                 <p className="mt-1.5 text-[10px] uppercase tracking-wider text-muted-foreground/70">
                   {n.time}
                 </p>
