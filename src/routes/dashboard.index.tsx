@@ -10,15 +10,17 @@ import {
   YAxis,
 } from "recharts";
 import { StatusPill } from "@/components/resourcex/StatusPill";
+import { UtilizationCallout } from "@/components/resourcex/UtilizationCallout";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { Button } from "@/components/ui/button";
+import { liveTotals, liveUtilizationSeries, useDemoState } from "@/lib/demo-store";
 import {
   bookings,
   incomingRequests,
   inr,
   notifications,
-  utilizationSeries,
 } from "@/lib/resourcex-data";
+
 
 export const Route = createFileRoute("/dashboard/")({
   head: () => ({
@@ -37,11 +39,24 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 function DashboardHome() {
+  const demo = useDemoState();
+  const totals = liveTotals(demo);
+  const series = liveUtilizationSeries(demo);
   const stats = [
     { label: "Active resources", value: "6", icon: Package, delta: "+1 this month" },
     { label: "Open requests", value: String(incomingRequests.length), icon: Inbox, delta: "3 need a reply" },
-    { label: "Utilisation", value: "78%", icon: TrendingUp, delta: "+4% vs Aug" },
-    { label: "Revenue (Sep)", value: inr(182000), icon: IndianRupee, delta: "+13% vs Aug" },
+    {
+      label: "Utilisation",
+      value: `${totals.avgUtilization}%`,
+      icon: TrendingUp,
+      delta: totals.extraBookings ? `+${totals.extraBookings} booking this session` : "+4% vs Aug",
+    },
+    {
+      label: "Revenue (Sep)",
+      value: inr(totals.septRevenue),
+      icon: IndianRupee,
+      delta: totals.extraBookings ? "Updated with live booking" : "+13% vs Aug",
+    },
   ];
 
   return (
@@ -50,11 +65,14 @@ function DashboardHome() {
       subtitle="Hotel Horizon · Andheri East, Mumbai"
       actions={
         <Button asChild>
-          <Link to="/dashboard/add-resource">Add resource</Link>
+          <Link to="/dashboard/add-resource" search={{ edit: undefined }}>Add resource</Link>
         </Button>
       }
     >
+      <UtilizationCallout className="mb-6" />
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+
         {stats.map((s) => (
           <div key={s.label} className="panel p-5">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
@@ -84,7 +102,7 @@ function DashboardHome() {
           </div>
           <div className="mt-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={utilizationSeries}>
+              <AreaChart data={series}>
                 <defs>
                   <linearGradient id="rxUtil" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.5} />
@@ -122,7 +140,7 @@ function DashboardHome() {
             {notifications.map((n) => (
               <li key={n.id} className="rounded-xl border border-border bg-surface px-4 py-3">
                 <p className="text-sm font-semibold text-foreground">{n.title}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{n.body}</p>
+                <p className="mt-1 text-xs text-muted-foreground capitalize">{n.kind}</p>
                 <p className="mt-1.5 text-[10px] uppercase tracking-wider text-muted-foreground/70">
                   {n.time}
                 </p>
@@ -179,7 +197,7 @@ function DashboardHome() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-foreground">{b.resource}</p>
                   <p className="truncate text-xs text-muted-foreground">
-                    {b.counterparty} · {b.date} · {inr(b.amount)}
+                    {b.business} · {b.date} · {inr(b.amount)}
                   </p>
                 </div>
                 <StatusPill status={b.status} className="shrink-0" />

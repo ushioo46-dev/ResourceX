@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { BadgeCheck, Star } from "lucide-react";
+
 import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { Button } from "@/components/ui/button";
@@ -80,7 +81,11 @@ function BusinessProfileSettings() {
             <p className="mt-2 text-xs text-muted-foreground">
               GST and business registration verified on 12 Aug 2026.
             </p>
+            <Button asChild variant="outline" size="sm" className="mt-4 w-full">
+              <Link to="/dashboard/verify">Get verified / manage documents</Link>
+            </Button>
           </div>
+
           <div className="panel p-5">
             <p className="text-xs uppercase tracking-wider text-muted-foreground">Reputation</p>
             <p className="mt-3 flex items-center gap-2 text-2xl font-extrabold text-foreground">

@@ -33,7 +33,7 @@ function Notifications() {
             </span>
             <div className="min-w-0">
               <p className="text-sm font-bold text-foreground">{n.title}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{n.body}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{n.kind}</p>
               <p className="mt-2 text-[10px] uppercase tracking-wider text-muted-foreground/70">
                 {n.time}
               </p>

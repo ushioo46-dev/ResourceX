@@ -15,13 +15,14 @@ import {
   YAxis,
 } from "recharts";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { UtilizationCallout } from "@/components/resourcex/UtilizationCallout";
+import { liveTotals, liveUtilizationSeries, useDemoState } from "@/lib/demo-store";
 import {
   bookingStatusSeries,
   demandSeries,
   inr,
-  resourcePerformance,
-  utilizationSeries,
 } from "@/lib/resourcex-data";
+
 
 export const Route = createFileRoute("/dashboard/analytics")({
   head: () => ({
@@ -48,15 +49,22 @@ const tooltipStyle = {
 };
 
 function Analytics() {
-  const best = [...resourcePerformance].sort((a, b) => b.utilization - a.utilization)[0]!;
-  const worst = [...resourcePerformance].sort((a, b) => a.utilization - b.utilization)[0]!;
+  const demo = useDemoState();
+  const totals = liveTotals(demo);
+  const series = liveUtilizationSeries(demo);
+  const perf = totals.performance;
+  const best = [...perf].sort((a, b) => b.utilization - a.utilization)[0]!;
+  const worst = [...perf].sort((a, b) => a.utilization - b.utilization)[0]!;
+  const sixMonthRevenue = series.reduce((s, r) => s + r.revenue, 0);
 
   return (
     <DashboardShell title="Analytics" subtitle="April – September 2026 · demo data">
+      <UtilizationCallout className="mb-6" />
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Avg utilisation", "66%"],
-          ["Revenue (6 mo)", inr(793000)],
+          ["Avg utilisation", `${totals.avgUtilization}%`],
+          ["Revenue (6 mo)", inr(sixMonthRevenue)],
           ["Best performer", `${best.resource} · ${best.utilization}%`],
           ["Needs attention", `${worst.resource} · ${worst.utilization}%`],
         ].map(([k, v]) => (
@@ -67,12 +75,13 @@ function Analytics() {
         ))}
       </div>
 
+
       <div className="mt-6 grid gap-6 xl:grid-cols-2">
         <div className="panel p-5">
           <h2 className="text-sm font-bold text-foreground">Utilisation & bookings</h2>
           <div className="mt-5 h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={utilizationSeries}>
+              <LineChart data={series}>
                 <CartesianGrid stroke="var(--color-border)" vertical={false} />
                 <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} />
                 <YAxis stroke="var(--color-muted-foreground)" fontSize={11} />
@@ -149,7 +158,7 @@ function Analytics() {
           <h2 className="text-sm font-bold text-foreground">Revenue by month</h2>
           <div className="mt-5 h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={utilizationSeries}>
+              <BarChart data={series}>
                 <CartesianGrid stroke="var(--color-border)" vertical={false} />
                 <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={11} />
                 <YAxis

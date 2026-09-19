@@ -28,12 +28,12 @@ type SearchParams = {
 
 export const Route = createFileRoute("/results")({
   validateSearch: (search: Record<string, unknown>): SearchParams => ({
-    resource: typeof search.resource === "string" ? search.resource : "Banquet chairs",
-    quantity: Number(search.quantity) || 150,
-    location: typeof search.location === "string" ? search.location : "City Centre, Mumbai",
-    budget: Number(search.budget) || 10000,
-    distance: Number(search.distance) || 10,
-    date: typeof search.date === "string" ? search.date : "2026-09-15",
+    resource: typeof search["resource"] === "string" ? search["resource"] : "Banquet chairs",
+    quantity: Number(search["quantity"]) || 150,
+    location: typeof search["location"] === "string" ? search["location"] : "City Centre, Mumbai",
+    budget: Number(search["budget"]) || 10000,
+    distance: Number(search["distance"]) || 10,
+    date: typeof search["date"] === "string" ? search["date"] : "2026-09-15",
   }),
   head: () => ({
     meta: [

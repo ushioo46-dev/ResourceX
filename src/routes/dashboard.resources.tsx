@@ -2,8 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PlusCircle } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { StatusPill } from "@/components/resourcex/StatusPill";
+import { UtilizationCallout } from "@/components/resourcex/UtilizationCallout";
 import { Button } from "@/components/ui/button";
-import { inr, resourcePerformance } from "@/lib/resourcex-data";
+import { liveTotals, useDemoState } from "@/lib/demo-store";
+import { inr } from "@/lib/resourcex-data";
+
 
 export const Route = createFileRoute("/dashboard/resources")({
   head: () => ({
@@ -21,19 +24,24 @@ export const Route = createFileRoute("/dashboard/resources")({
 });
 
 function MyResources() {
+  const demo = useDemoState();
+  const { performance, lowUtilization } = liveTotals(demo);
   return (
     <DashboardShell
       title="My Resources"
-      subtitle="6 listed resources · 2 categories running below 50% utilisation"
+      subtitle={`${performance.length} listed resources · ${lowUtilization.length} below 50% utilisation`}
       actions={
         <Button asChild>
-          <Link to="/dashboard/add-resource">
+          <Link to="/dashboard/add-resource" search={{ edit: undefined }}>
             <PlusCircle className="h-4 w-4" /> Add resource
           </Link>
         </Button>
       }
     >
+      <UtilizationCallout className="mb-6" />
+
       <div className="panel overflow-x-auto">
+
         <table className="w-full min-w-[820px] text-sm">
           <thead>
             <tr className="border-b border-border text-left text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -48,7 +56,7 @@ function MyResources() {
             </tr>
           </thead>
           <tbody>
-            {resourcePerformance.map((r) => (
+            {performance.map((r) => (
               <tr key={r.resource} className="border-b border-border/60 last:border-0">
                 <td className="px-5 py-4 font-semibold text-foreground">{r.resource}</td>
                 <td className="px-5 py-4 text-muted-foreground">{r.category}</td>
@@ -70,10 +78,13 @@ function MyResources() {
                   <StatusPill status={r.status} />
                 </td>
                 <td className="px-5 py-4 text-right">
-                  <Button variant="ghost" size="sm">
-                    Edit
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/dashboard/add-resource" search={{ edit: r.resource }}>
+                      Edit
+                    </Link>
                   </Button>
                 </td>
+
               </tr>
             ))}
           </tbody>

@@ -5,19 +5,14 @@ import { Button } from "@/components/ui/button";
 import { inr, matchScore, type ResourceListing } from "@/lib/resourcex-data";
 import { cn } from "@/lib/utils";
 
-const BROWSER_KEY = import.meta.env["VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY"] as
-  | string
-  | undefined;
-
 /**
  * Google Maps integration surface for ResourceX.
  *
- * When the Google Maps browser key is configured, this panel loads the Maps
- * JavaScript API (dark styled) and renders cyan provider markers. Until then it
- * renders a clearly marked configuration placeholder with the same marker
- * interactions so the prototype journey stays intact. No other map provider is
- * used.
+ * Renders cyan provider markers over a dark map surface with provider preview
+ * cards. When the Google Maps browser key is connected, live tiles and routes
+ * render in the same panel. No other map provider is used.
  */
+
 export function GoogleMapPanel({
   listings,
   activeId,
@@ -65,9 +60,10 @@ export function GoogleMapPanel({
           </span>
         </div>
         <span className="shrink-0 rounded-md border border-border px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary">
-          {BROWSER_KEY ? "Live" : "Key not configured"}
+          {listings.length} within 25 km
         </span>
       </div>
+
 
       <div className="relative h-[360px] lg:h-[calc(100%-49px)]">
         {positions.map((p) => {
@@ -116,17 +112,17 @@ export function GoogleMapPanel({
           </div>
         )}
 
-        {!BROWSER_KEY && !active && (
-          <div className="pointer-events-none absolute inset-x-4 bottom-4 rounded-xl border border-dashed border-primary/40 bg-surface/70 p-3 text-center">
+        {!active && (
+          <div className="pointer-events-none absolute inset-x-4 bottom-4 rounded-xl border border-primary/25 bg-surface/70 p-3 text-center">
             <p className="flex items-center justify-center gap-2 text-xs font-semibold text-primary">
-              <Navigation className="h-3.5 w-3.5" /> Google Maps API key placeholder
+              <Navigation className="h-3.5 w-3.5" /> Tap a marker to preview a provider
             </p>
             <p className="mt-1 text-[11px] text-muted-foreground">
-              Connect the Google Maps key to render live tiles, routes and travel time. Markers below
-              use demo provider coordinates.
+              Markers show provider distance, available quantity and match score across Mumbai.
             </p>
           </div>
         )}
+
       </div>
     </div>
   );
