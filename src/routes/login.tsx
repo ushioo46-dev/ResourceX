@@ -41,9 +41,10 @@ function LoginPage() {
     <div className="relative min-h-screen bg-background">
       <div className="absolute inset-0 grid-backdrop opacity-60" aria-hidden />
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-14">
-        <Link to="/" className="mx-auto">
+        <div className="mx-auto">
           <Logo showTagline />
-        </Link>
+        </div>
+
 
         <div className="mt-8 panel p-6">
           <Tabs defaultValue="login">
