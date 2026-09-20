@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { StatusPill } from "@/components/resourcex/StatusPill";
 import { Button } from "@/components/ui/button";
 import { bookings, inr } from "@/lib/resourcex-data";
+
 
 export const Route = createFileRoute("/dashboard/bookings")({
   head: () => ({
@@ -51,10 +53,19 @@ function Bookings() {
                   <StatusPill status={b.status} />
                 </td>
                 <td className="px-5 py-4 text-right">
-                  <Button variant="ghost" size="sm">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() =>
+                      toast.info(`${b.id} · ${b.resource}`, {
+                        description: `${b.business} · ${b.date}, ${b.time} · ${inr(b.amount)} · ${b.status}`,
+                      })
+                    }
+                  >
                     Details
                   </Button>
                 </td>
+
               </tr>
             ))}
           </tbody>
