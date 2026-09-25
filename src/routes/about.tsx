@@ -44,17 +44,12 @@ function About() {
             algorithm — ranks the options, Google Maps shows what is genuinely nearby, and every
             request, negotiation, booking and fulfilment step is tracked in one place.
           </p>
-          <p>
-            This build is a hackathon prototype for “Hospitality Resource Exchange — Smart B2B
-            Marketplace for Shared Resources”, using realistic demo data across Mumbai, Navi Mumbai,
-            Pune, Hyderabad, Bengaluru and Delhi.
-          </p>
         </div>
 
         <div className="mt-12 grid gap-5 sm:grid-cols-3">
           {[
-            { icon: Mail, label: "Email", value: "hello@resourcex.io" },
-            { icon: Phone, label: "Phone", value: "+91 98200 00000" },
+            { icon: Mail, label: "Email", value: "tejaswinimandawdhare4@gmail.com" },
+            { icon: Phone, label: "Phone", value: "+91 8454820655" },
             { icon: MapPin, label: "Base", value: "Mumbai, India" },
           ].map((c) => (
             <div key={c.label} className="panel p-5">
