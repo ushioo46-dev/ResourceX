@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/resourcex-logo.jpg.asset.json";
 import { cn } from "@/lib/utils";
 
 export function Logo({
@@ -12,7 +11,7 @@ export function Logo({
   return (
     <Link to="/" className={cn("group flex min-w-0 items-center gap-3", className)}>
       <img
-        src={logo.url}
+        src="/resourcex-logo.jpg.png"
         alt="ResourceX logo"
         className="h-10 w-10 shrink-0 rounded-xl border border-border object-cover"
       />
