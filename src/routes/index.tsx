@@ -12,7 +12,6 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
-import { HeroNetwork } from "@/components/site/HeroNetwork";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { MatchMeter } from "@/components/resourcex/MatchMeter";
@@ -80,6 +79,165 @@ const steps = [
   },
 ];
 
+function SmartMatchCard() {
+  return (
+    <div className="group relative mx-auto w-full max-w-md [perspective:1200px]">
+      {/* Floating match badge */}
+      <div className="absolute -right-3 -top-4 z-20 flex items-center gap-2 rounded-full border border-primary/30 bg-background/90 px-3 py-2 shadow-[0_0_30px_rgba(45,230,210,0.15)] backdrop-blur-md transition-transform duration-500 group-hover:-translate-y-1">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+        <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+          Live Match
+        </span>
+      </div>
+
+      {/* Main card */}
+      <div className="relative overflow-hidden rounded-3xl border border-primary/25 bg-card/80 p-5 shadow-2xl backdrop-blur-xl transition-all duration-500 ease-out group-hover:-translate-y-2 group-hover:rotate-[1deg] group-hover:border-primary/50 group-hover:shadow-[0_25px_70px_rgba(45,230,210,0.15)]">
+        {/* Glow */}
+        <div
+          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-primary/15 blur-3xl"
+          aria-hidden
+        />
+
+        {/* Header */}
+        <div className="relative flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                Smart Match
+              </span>
+            </div>
+
+            <p className="mt-2 text-xs text-muted-foreground">
+              Best resource for your requirement
+            </p>
+          </div>
+
+          {/* Match score */}
+          <div className="relative grid h-16 w-16 place-items-center rounded-full border border-primary/30 bg-primary/10">
+            <div className="text-center">
+              <div className="text-lg font-black leading-none text-primary">
+                94%
+              </div>
+              <div className="mt-1 text-[8px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Match
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Resource */}
+        <div className="relative mt-6 rounded-2xl border border-border bg-background/50 p-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-foreground">
+                  Premium Conference Hall
+                </h3>
+                <BadgeCheck className="h-4 w-4 shrink-0 text-primary" />
+              </div>
+
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <MapPinned className="h-3.5 w-3.5 text-primary" />
+                Lower Parel, Mumbai
+              </div>
+            </div>
+
+            <span className="shrink-0 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-emerald-300">
+              Available
+            </span>
+          </div>
+
+          {/* Details */}
+          <div className="mt-5 grid grid-cols-3 gap-2">
+            <div className="rounded-xl bg-surface/70 p-3">
+              <p className="text-[9px] uppercase tracking-wider text-muted-foreground">
+                Price
+              </p>
+              <p className="mt-1 text-sm font-bold text-foreground">
+                ₹2,500
+              </p>
+              <p className="text-[9px] text-muted-foreground">/ day</p>
+            </div>
+
+            <div className="rounded-xl bg-surface/70 p-3">
+              <p className="text-[9px] uppercase tracking-wider text-muted-foreground">
+                Distance
+              </p>
+              <p className="mt-1 text-sm font-bold text-foreground">
+                2.4 km
+              </p>
+              <p className="text-[9px] text-muted-foreground">nearby</p>
+            </div>
+
+            <div className="rounded-xl bg-surface/70 p-3">
+              <p className="text-[9px] uppercase tracking-wider text-muted-foreground">
+                Capacity
+              </p>
+              <p className="mt-1 text-sm font-bold text-foreground">
+                120
+              </p>
+              <p className="text-[9px] text-muted-foreground">guests</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Why this match */}
+        <div className="relative mt-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+            Why this match?
+          </p>
+
+          <div className="mt-3 grid gap-2">
+            {[
+              "Closest available resource",
+              "Fits your requested capacity",
+              "Within your budget",
+            ].map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-2 text-xs text-muted-foreground"
+              >
+                <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-primary/15">
+                  <BadgeCheck className="h-3 w-3 text-primary" />
+                </span>
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <Link
+          to="/search"
+          className="relative mt-6 flex items-center justify-between rounded-xl border border-primary/25 bg-primary/10 px-4 py-3 text-sm font-bold text-primary transition-all duration-300 hover:bg-primary/15 hover:shadow-[0_0_25px_rgba(45,230,210,0.12)]"
+        >
+          <span>Explore this match</span>
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+        </Link>
+      </div>
+
+      {/* Decorative floating card */}
+      <div className="absolute -bottom-5 -left-8 hidden rounded-2xl border border-border bg-card/80 px-4 py-3 shadow-xl backdrop-blur-md sm:block">
+        <div className="flex items-center gap-3">
+          <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10">
+            <MapPinned className="h-4 w-4 text-primary" />
+          </div>
+
+          <div>
+            <p className="text-[9px] uppercase tracking-wider text-muted-foreground">
+              Distance
+            </p>
+            <p className="text-xs font-bold text-foreground">
+              2.4 km away
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Landing() {
   return (
     <div className="min-h-screen bg-background">
@@ -131,8 +289,8 @@ function Landing() {
               ))}
             </dl>
           </div>
-          <div className="relative min-w-0 panel bg-card/60 p-4 sm:p-6">
-            <HeroNetwork />
+          <div className="relative min-w-0 py-6 sm:py-10">
+          <SmartMatchCard />
           </div>
         </div>
       </section>

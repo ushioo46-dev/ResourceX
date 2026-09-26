@@ -173,3 +173,9 @@
 @utility pulse-node {
   animation: pulse-node 3.2s ease-in-out infinite;
 }
+
+:root {
+  --mouse-x: 50vw;
+  --mouse-y: 50vh;
+}
+
