@@ -3,6 +3,7 @@ import { SlidersHorizontal } from "lucide-react";
 import { useMemo, useState } from "react";
 import { GoogleMapPanel } from "@/components/resourcex/GoogleMapPanel";
 import { ResourceCard } from "@/components/resourcex/ResourceCard";
+import { FulfillmentSummary } from "@/components/resourcex/FulfillmentSummary";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,9 +16,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categories, inr, listings, matchScore } from "@/lib/resourcex-data";
+import {
+  buildFulfillmentPlan,
+  buildRequirementGroups,
+  categories,
+  inr,
+  listings,
+  type RequestedRequirement,
+} from "@/lib/resourcex-data";
 
 type SearchParams = {
+  resources?: string;
   resource?: string;
   quantity?: number;
   location?: string;
@@ -28,9 +37,13 @@ type SearchParams = {
 
 export const Route = createFileRoute("/results")({
   validateSearch: (search: Record<string, unknown>): SearchParams => ({
-    resource: typeof search["resource"] === "string" ? search["resource"] : "Banquet chairs",
+    resources:
+      typeof search["resources"] === "string" ? search["resources"] : "[]",
+    resource:
+      typeof search["resource"] === "string" ? search["resource"] : "Banquet chairs",
     quantity: Number(search["quantity"]) || 150,
-    location: typeof search["location"] === "string" ? search["location"] : "City Centre, Mumbai",
+    location:
+      typeof search["location"] === "string" ? search["location"] : "City Centre, Mumbai",
     budget: Number(search["budget"]) || 10000,
     distance: Number(search["distance"]) || 10,
     date: typeof search["date"] === "string" ? search["date"] : "2026-09-15",
@@ -66,22 +79,71 @@ function Results() {
   const [selectedCats, setSelectedCats] = useState<string[]>([]);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const results = useMemo(() => {
-    const filtered = listings.filter(
-      (l) =>
-        l.distanceKm <= maxDistance + 4 &&
-        l.totalPrice <= maxPrice &&
-        l.rating >= minRating &&
-        (!deliveryOnly || l.delivery) &&
-        (selectedCats.length === 0 || selectedCats.includes(l.category)),
-    );
-    const sorted = [...filtered];
-    if (sort === "Best Match") sorted.sort((a, b) => matchScore(b.match) - matchScore(a.match));
-    if (sort === "Closest") sorted.sort((a, b) => a.distanceKm - b.distanceKm);
-    if (sort === "Lowest Price") sorted.sort((a, b) => a.totalPrice - b.totalPrice);
-    if (sort === "Highest Rated") sorted.sort((a, b) => b.rating - a.rating);
-    return sorted;
-  }, [sort, maxDistance, maxPrice, minRating, deliveryOnly, selectedCats]);
+  const requestedRequirements = useMemo<RequestedRequirement[]>(() => {
+    let requirements: RequestedRequirement[] = [];
+
+    if (params.resources) {
+      try {
+        const parsed = JSON.parse(params.resources);
+        if (Array.isArray(parsed)) {
+          requirements = parsed
+            .map((item) => ({
+              resource:
+                typeof item?.resource === "string" ? item.resource.toLowerCase().trim() : "",
+              quantity: Number(item?.quantity) || 0,
+            }))
+            .filter((item) => item.resource);
+        }
+      } catch {
+        requirements = [];
+      }
+    }
+
+    if (requirements.length === 0 && params.resource) {
+      requirements = [
+        {
+          resource: params.resource.toLowerCase().trim(),
+          quantity: Number(params.quantity) || 0,
+        },
+      ];
+    }
+
+    return requirements;
+  }, [params.resources, params.resource, params.quantity]);
+
+  const requirementGroups = useMemo(
+    () =>
+      buildRequirementGroups(
+        requestedRequirements,
+        { maxDistance, maxPrice, minRating, deliveryOnly, selectedCats },
+        sort,
+      ),
+    [requestedRequirements, sort, maxDistance, maxPrice, minRating, deliveryOnly, selectedCats],
+  );
+
+  const fulfillmentPlan = useMemo(
+    () => buildFulfillmentPlan(requirementGroups),
+    [requirementGroups],
+  );
+
+  const allMatchedListings = useMemo(() => {
+    const seen = new Set<string>();
+    const combined: (typeof requirementGroups)[number]["matches"] = [];
+    requirementGroups.forEach((group) => {
+      group.matches.forEach((listing) => {
+        if (!seen.has(listing.id)) {
+          seen.add(listing.id);
+          combined.push(listing);
+        }
+      });
+    });
+    return combined;
+  }, [requirementGroups]);
+
+  const totalProviders = useMemo(
+    () => new Set(allMatchedListings.map((l) => l.provider)).size,
+    [allMatchedListings],
+  );
 
   const filters = (
     <div className="space-y-6">
@@ -132,6 +194,29 @@ function Results() {
     </div>
   );
 
+  const searchSummary = (() => {
+    if (!params.resources) {
+      return `${params.quantity} × ${params.resource}`;
+    }
+
+    try {
+      const requirements = JSON.parse(params.resources) as Array<{
+        resource?: string;
+        quantity?: string | number;
+      }>;
+
+      if (requirements.length === 0) {
+        return `${params.quantity} × ${params.resource}`;
+      }
+
+      return requirements
+        .map((requirement) => `${requirement.quantity ?? ""} × ${requirement.resource ?? ""}`)
+        .join(" • ");
+    } catch {
+      return `${params.quantity} × ${params.resource}`;
+    }
+  })();
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -139,12 +224,10 @@ function Results() {
       <div className="border-b border-border bg-surface/60">
         <div className="mx-auto grid max-w-[1600px] grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-4 sm:px-6">
           <div className="min-w-0">
-            <p className="truncate text-sm font-bold text-foreground">
-              {params.quantity} × {params.resource}
-            </p>
+            <p className="truncate text-sm font-bold text-foreground">{searchSummary}</p>
             <p className="truncate text-xs text-muted-foreground">
               {params.location} · within {params.distance} km · under {inr(params.budget ?? 10000)} ·{" "}
-              {results.length} providers
+              {totalProviders} providers
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -176,11 +259,46 @@ function Results() {
           <div className="panel sticky top-24 p-5">{filters}</div>
         </aside>
 
-        <div className="min-w-0 space-y-4">
-          {results.map((l) => (
-            <ResourceCard key={l.id} listing={l} active={l.id === activeId} onHighlight={setActiveId} />
+        <div className="min-w-0 space-y-8">
+          {fulfillmentPlan && requirementGroups.length > 1 && (
+            <FulfillmentSummary plan={fulfillmentPlan} />
+          )}
+
+          {requirementGroups.map((group) => (
+            <div
+              key={`${group.requirement.resource}-${group.requirement.quantity}`}
+              className="space-y-4"
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-primary">
+                  {group.requirement.quantity} × {group.requirement.resource}
+                </h2>
+                <span className="text-xs text-muted-foreground">
+                  {group.matches.length} provider{group.matches.length === 1 ? "" : "s"} can fulfill
+                  this
+                </span>
+              </div>
+
+              {group.matches.length === 0 && (
+                <div className="panel p-6 text-center text-sm text-muted-foreground">
+                  No providers currently have enough {group.requirement.resource} for this request.
+                  Try widening the distance or budget filters.
+                </div>
+              )}
+
+              {group.matches.map((listing) => (
+                <ResourceCard
+                  key={listing.id}
+                  listing={listing}
+                  requestedQuantity={listing.requestedQuantity}
+                  active={listing.id === activeId}
+                  onHighlight={setActiveId}
+                />
+              ))}
+            </div>
           ))}
-          {results.length === 0 && (
+
+          {requirementGroups.length === 0 && (
             <div className="panel p-10 text-center text-sm text-muted-foreground">
               No resources match these filters. Widen the distance or budget range.
             </div>
@@ -189,7 +307,7 @@ function Results() {
 
         <div className="lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)]">
           <GoogleMapPanel
-            listings={results}
+            listings={allMatchedListings}
             activeId={activeId}
             onSelect={setActiveId}
             className="h-full"

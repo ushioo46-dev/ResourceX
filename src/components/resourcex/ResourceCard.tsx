@@ -2,19 +2,22 @@ import { Link } from "@tanstack/react-router";
 import { BadgeCheck, MapPin, Star, Truck } from "lucide-react";
 import { MatchBadge } from "@/components/resourcex/MatchMeter";
 import { Button } from "@/components/ui/button";
-import { inr, matchScore, type ResourceListing } from "@/lib/resourcex-data";
+import { computeListingPrice, inr, matchScore, type ResourceListing } from "@/lib/resourcex-data";
 import { cn } from "@/lib/utils";
 
 export function ResourceCard({
   listing,
+  requestedQuantity,
   active,
   onHighlight,
 }: {
   listing: ResourceListing;
+  requestedQuantity?: number;
   active?: boolean;
   onHighlight?: (id: string) => void;
 }) {
   const score = matchScore(listing.match);
+  const displayPrice = computeListingPrice(listing, requestedQuantity);
 
   return (
     <article
@@ -33,7 +36,7 @@ export function ResourceCard({
         </div>
         <div className="shrink-0 text-right">
           <div className="text-lg font-extrabold text-foreground tabular-nums">
-            {inr(listing.totalPrice)}
+            {inr(displayPrice)}
           </div>
           <div className="text-[11px] text-muted-foreground">{inr(listing.unitPrice)} / unit</div>
         </div>
@@ -44,6 +47,11 @@ export function ResourceCard({
           <dt className="text-muted-foreground">Available</dt>
           <dd className="mt-0.5 font-semibold text-foreground tabular-nums">
             {listing.quantity} units
+            {typeof requestedQuantity === "number" && (
+              <span className="ml-1 font-normal text-muted-foreground">
+                · Requested {requestedQuantity}
+              </span>
+            )}
           </dd>
         </div>
         <div>
@@ -88,7 +96,10 @@ export function ResourceCard({
           </Link>
         </Button>
         <Button asChild size="sm">
-          <Link to="/request/$resourceId" params={{ resourceId: listing.id }}>
+          <Link 
+          to="/request/$resourceId" 
+          params={{ resourceId: listing.id }}
+          search={{ quantity: requestedQuantity }} >
             Request
           </Link>
         </Button>

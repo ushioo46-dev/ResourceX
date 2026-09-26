@@ -12,6 +12,7 @@ import {
   cities,
   listings,
   parseRequirement,
+  parseRequirements,
   type ParsedRequirement,
 } from "@/lib/resourcex-data";
 import { ResourceCard } from "@/components/resourcex/ResourceCard";
@@ -40,7 +41,7 @@ const EXAMPLE = "I need 150 chairs near the city centre tomorrow evening under �
 function SearchPage() {
   const navigate = useNavigate();
   const [nl, setNl] = useState("");
-  const [parsed, setParsed] = useState<ParsedRequirement | null>(null);
+  const [parsed, setParsed] = useState<ParsedRequirement[] | null>(null);
   const [parsing, setParsing] = useState(false);
 
   const [form, setForm] = useState({
@@ -56,35 +57,55 @@ function SearchPage() {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
+  
   const interpret = () => {
-    const text = nl.trim() || EXAMPLE;
-    setParsing(true);
-    setTimeout(() => {
-      const result = parseRequirement(text);
-      setParsed(result);
+  const text = nl.trim() || EXAMPLE;
+  setParsing(true);
+
+  setTimeout(() => {
+    const results = parseRequirements(text);
+
+    setParsed(results);
+
+    if (results.length > 0) {
+      const first = results[0]!;
+
       setForm((f) => ({
         ...f,
-        resource: result.resource,
-        quantity: result.quantity,
-        location: result.location,
-        budget: result.budget.replace(/[₹,]/g, ""),
+        resource: first.resource,
+        quantity: first.quantity,
+        location: first.location,
+        budget: first.budget.replace(/[₹,]/g, ""),
       }));
-      setParsing(false);
-    }, 700);
-  };
+    }
 
-  const runSearch = () =>
-    navigate({
-      to: "/results",
-      search: {
-        resource: form.resource,
-        quantity: Number(form.quantity) || 150,
-        location: form.location,
-        budget: Number(form.budget) || 10000,
-        distance: Number(form.distance) || 10,
-        date: form.date,
-      },
-    });
+    setParsing(false);
+  }, 700);
+};
+
+  const runSearch = () => {
+  const requirements = parsed ?? [
+    {
+      resource: form.resource,
+      quantity: form.quantity,
+      location: form.location,
+      date: form.date,
+      time: form.time,
+      budget: `₹${form.budget}`,
+    },
+  ];
+
+  navigate({
+    to: "/results",
+    search: {
+      resources: JSON.stringify(requirements),
+      location: form.location,
+      budget: Number(form.budget) || 10000,
+      distance: Number(form.distance) || 10,
+      date: form.date,
+    },
+  });
+};
 
   return (
     <div className="min-h-screen bg-background">
@@ -131,23 +152,38 @@ function SearchPage() {
                   Interpreted parameters
                 </p>
                 <dl className="mt-4 grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
-                  {(
-                    [
-                      ["Resource", parsed.resource],
-                      ["Quantity", parsed.quantity],
-                      ["Location", parsed.location],
-                      ["Date", parsed.date],
-                      ["Time", parsed.time],
-                      ["Budget", parsed.budget],
-                    ] as const
-                  ).map(([k, v]) => (
-                    <div key={k} className="min-w-0">
-                      <dt className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                        {k}
-                      </dt>
-                      <dd className="mt-1 text-sm font-semibold text-foreground">{v}</dd>
-                    </div>
-                  ))}
+                  {parsed.map((requirement, index) => (
+  <div
+    key={`${requirement.resource}-${index}`}
+    className="col-span-full rounded-lg border border-border p-3"
+  >
+    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+      Requirement {index + 1}
+    </p>
+
+    <div className="mt-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      {(
+        [
+          ["Resource", requirement.resource],
+          ["Quantity", requirement.quantity],
+          ["Location", requirement.location],
+          ["Date", requirement.date],
+          ["Time", requirement.time],
+          ["Budget", requirement.budget],
+        ] as const
+      ).map(([k, v]) => (
+        <div key={k} className="min-w-0">
+          <dt className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            {k}
+          </dt>
+          <dd className="mt-1 text-sm font-semibold text-foreground">
+            {v}
+          </dd>
+        </div>
+      ))}
+    </div>
+  </div>
+))}
                 </dl>
                 <Button className="mt-4" onClick={runSearch}>
                   Search with these requirements

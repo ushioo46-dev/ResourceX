@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -10,11 +10,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { getListing, inr } from "@/lib/resourcex-data";
 
 export const Route = createFileRoute("/request/$resourceId")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    quantity: Number(search["quantity"]) || 150,
+  }),
   loader: ({ params }) => {
     const listing = getListing(params.resourceId);
     if (!listing) throw notFound();
     return { listing };
   },
+  
   head: ({ loaderData }) => {
     if (!loaderData) {
       return { meta: [{ title: "Request unavailable — ResourceX" }, { name: "robots", content: "noindex" }] };
@@ -35,21 +39,38 @@ export const Route = createFileRoute("/request/$resourceId")({
       ],
     };
   },
-  component: RequestPage,
-});
+  component: RequestPage,         
+}); 
 
 function RequestPage() {
   const { listing } = Route.useLoaderData();
+  const { quantity: requestedQty } = Route.useSearch();
   const navigate = useNavigate();
-  const [quantity, setQuantity] = useState(150);
-  const [offer, setOffer] = useState(listing.totalPrice);
+
+  const [quantity, setQuantity] = useState(requestedQty);
+  const [offer, setOffer] = useState(listing.unitPrice * requestedQty);
   const [date, setDate] = useState("2026-09-15");
   const [start, setStart] = useState("17:00");
   const [end, setEnd] = useState("23:00");
   const [notes, setNotes] = useState(
-    "Corporate gala for 150 guests. Need chairs delivered by 3 PM for setup.",
+    `Setup for ${requestedQty} guests. Need ${listing.name.toLowerCase()} delivered by 3 PM for setup.`,
   );
   const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    setQuantity(requestedQty);
+    setOffer(listing.unitPrice * requestedQty);
+    setDate("2026-09-15");
+    setStart("17:00");
+    setEnd("23:00");
+    setNotes(
+      `Setup for ${requestedQty} guests. Need ${listing.name.toLowerCase()} delivered by 3 PM for setup.`,
+    );
+    setSent(false);
+  }, [listing.id, requestedQty]);
+  
+
+  // ...rest of the file stays exactly the same
 
   const submit = () => {
     setSent(true);
