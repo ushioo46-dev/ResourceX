@@ -1,47 +1,37 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export default function CursorGlow() {
-  const glowRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    console.log("✅ CursorGlow is running");
+    const handleMouseMove = (e: MouseEvent) => {
+      document.documentElement.style.setProperty(
+        "--mouse-x",
+        `${e.clientX}px`
+      );
 
-    const glow = glowRef.current;
-    if (!glow) return;
-
-    const moveGlow = (e: MouseEvent) => {
-      glow.style.left = `${e.clientX}px`;
-      glow.style.top = `${e.clientY}px`;
+      document.documentElement.style.setProperty(
+        "--mouse-y",
+        `${e.clientY}px`
+      );
     };
 
-    window.addEventListener("mousemove", moveGlow);
+    window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
-      window.removeEventListener("mousemove", moveGlow);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 
   return (
     <div
-      ref={glowRef}
+      className="pointer-events-none fixed inset-0 z-50"
       style={{
-        position: "fixed",
-        left: "50%",
-        top: "50%",
-        width: "180px",
-        height: "180px",
-        transform: "translate(-50%, -50%)",
-        borderRadius: "50%",
-        pointerEvents: "none",
-        zIndex: 2147483647,
-
-        background:
-          "radial-gradient(circle, rgba(45,230,210,0.65) 0%, rgba(45,230,210,0.3) 35%, rgba(45,230,210,0.08) 60%, transparent 75%)",
-
-        boxShadow:
-          "0 0 50px rgba(45,230,210,0.35), 0 0 100px rgba(45,230,210,0.2)",
-
-        transition: "left 0.08s linear, top 0.08s linear",
+        background: `
+          radial-gradient(
+            350px circle at var(--mouse-x) var(--mouse-y),
+            rgba(45, 230, 210, 0.08),
+            transparent 70%
+          )
+        `,
       }}
     />
   );
