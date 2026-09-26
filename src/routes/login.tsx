@@ -101,11 +101,6 @@ function LoginPage() {
             </TabsContent>
           </Tabs>
 
-          <p className="mt-5 flex items-start gap-2 text-[11px] leading-relaxed text-muted-foreground">
-            <Building2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-            Hackathon prototype: authentication is simulated, and any credentials open a demo business
-            account.
-          </p>
         </div>
 
         <Link to="/" className="mx-auto mt-6 text-xs text-muted-foreground hover:text-primary">
