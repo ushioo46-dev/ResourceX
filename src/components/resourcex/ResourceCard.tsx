@@ -99,7 +99,7 @@ export function ResourceCard({
           <Link 
           to="/request/$resourceId" 
           params={{ resourceId: listing.id }}
-          search={{ quantity: requestedQuantity }} >
+          search={{ quantity: requestedQuantity ?? 1 }}>
             Request
           </Link>
         </Button>
