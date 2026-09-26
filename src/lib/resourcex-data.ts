@@ -38,6 +38,7 @@ export type ResourceListing = {
   lng: number;
   description: string;
   match: MatchBreakdown;
+  photos: string[];
 };
 
 export const MATCH_WEIGHTS = [
@@ -56,6 +57,21 @@ export const matchLabel = (score: number) =>
 
 export const inr = (value: number) =>
   "₹" + value.toLocaleString("en-IN", { maximumFractionDigits: 0 });
+
+/**
+ * Generates 3 stable, guaranteed-to-load placeholder photo URLs for a
+ * listing, seeded off its own id so every listing gets its own distinct
+ * set of images (same listing always shows the same photos).
+ *
+ * Swap this out for real uploaded/hosted photo URLs whenever you have
+ * them — nothing else in the app needs to change, since every listing
+ * already just reads its own `photos` array.
+ */
+const listingPhotos = (seed: string): string[] => [
+  `https://picsum.photos/seed/${seed}-1/800/600`,
+  `https://picsum.photos/seed/${seed}-2/800/600`,
+  `https://picsum.photos/seed/${seed}-3/800/600`,
+];
 
 export const listings: ResourceListing[] = [
   {
@@ -81,6 +97,11 @@ export const listings: ResourceListing[] = [
     description:
       "Cushioned banquet chairs with protective covers, stored and maintained in-house at Hotel Horizon. Suitable for conferences, weddings and corporate dinners. Delivery, setup and pickup available within 10 km of Lower Parel.",
     match: { availability: 30, distance: 23, price: 18, quantity: 15, rating: 8 },
+   photos: [
+  "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=800&h=600&fit=crop",
+]
   },
   {
     id: "urban-banquets-banquet-chairs",
@@ -105,6 +126,11 @@ export const listings: ResourceListing[] = [
     description:
       "Premium gold-frame banquet chairs, ideal for wedding receptions and gala dinners. Includes seat covers and on-site arrangement crew.",
     match: { availability: 28, distance: 20, price: 15, quantity: 15, rating: 8 },
+    photos: [
+  "https://images.unsplash.com/photo-1528221297180-b340bcc21812?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://plus.unsplash.com/premium_photo-1673626577922-1b3f9771fc3f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1478146059778-26028b07395a?w=800&h=600&fit=crop",
+]
   },
   {
     id: "grand-vista-round-tables",
@@ -129,6 +155,11 @@ export const listings: ResourceListing[] = [
     description:
       "6-seater round banquet tables with linen options. Frequently paired with chair rentals for full banquet setups.",
     match: { availability: 27, distance: 15, price: 16, quantity: 14, rating: 8 },
+   photos: [
+  "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1478146059778-26028b07395a?w=800&h=600&fit=crop",
+]
   },
   {
     id: "crown-hospitality-projector",
@@ -153,6 +184,11 @@ export const listings: ResourceListing[] = [
     description:
       "6000-lumen 4K projector with 12ft motorised screen, HDMI/USB-C inputs and on-site technician support.",
     match: { availability: 26, distance: 22, price: 17, quantity: 13, rating: 10 },
+    photos: [
+  "https://your-cdn.com/crown-hospitality/projector-1.jpg",
+  "https://your-cdn.com/crown-hospitality/projector-2.jpg",
+  "https://your-cdn.com/crown-hospitality/projector-3.jpg",
+],
   },
   {
     id: "cityserve-parking",
@@ -177,6 +213,7 @@ export const listings: ResourceListing[] = [
     description:
       "Secured basement and surface parking with valet support, ideal for banquet overflow during peak evenings.",
     match: { availability: 24, distance: 24, price: 13, quantity: 12, rating: 7 },
+    photos: listingPhotos("cityserve-parking"),
   },
   {
     id: "elite-events-sound-system",
@@ -201,6 +238,7 @@ export const listings: ResourceListing[] = [
     description:
       "Complete line array PA setup with mixer, wireless mics and sound engineer for banquet halls up to 800 guests.",
     match: { availability: 22, distance: 18, price: 12, quantity: 12, rating: 7 },
+    photos: listingPhotos("elite-events-sound-system"),
   },
   {
     id: "grand-vista-kitchen",
@@ -225,6 +263,7 @@ export const listings: ResourceListing[] = [
     description:
       "FSSAI-compliant production kitchen lines with cold storage access, available for catering overflow during off-peak hours.",
     match: { availability: 20, distance: 12, price: 11, quantity: 11, rating: 8 },
+    photos: listingPhotos("grand-vista-kitchen"),
   },
   {
     id: "crown-hospitality-hall",
@@ -249,6 +288,7 @@ export const listings: ResourceListing[] = [
     description:
       "Pillarless banquet hall with in-house AV, green rooms and 200-car parking. Shared with partner hotels on idle dates.",
     match: { availability: 24, distance: 19, price: 10, quantity: 10, rating: 9 },
+    photos: listingPhotos("crown-hospitality-hall"),
   },
   {
     id: "cityserve-vehicles",
@@ -273,6 +313,7 @@ export const listings: ResourceListing[] = [
     description:
       "13-seater guest shuttles with chauffeur, used for airport transfers and inter-venue guest movement.",
     match: { availability: 21, distance: 14, price: 14, quantity: 12, rating: 7 },
+    photos: listingPhotos("cityserve-vehicles"),
   },
   {
     id: "urban-banquets-catering-equipment",
@@ -297,6 +338,7 @@ export const listings: ResourceListing[] = [
     description:
       "Chafing dishes, buffet counters, warmers and serving stations, cleaned and event-ready before dispatch.",
     match: { availability: 26, distance: 21, price: 16, quantity: 13, rating: 8 },
+    photos: listingPhotos("urban-banquets-catering-equipment"),
   },
 ];
 

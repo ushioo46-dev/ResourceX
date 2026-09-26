@@ -54,6 +54,8 @@ export const Route = createFileRoute("/resource/$resourceId")({
   ),
 });
 
+const PHOTO_LABELS = ["Inventory photo", "Setup view", "Storage & handling"];
+
 function ResourceDetails() {
   const { listing } = Route.useLoaderData();
 
@@ -96,23 +98,25 @@ function ResourceDetails() {
               </div>
             </div>
 
-            {/* Photo strip (illustrative panels) */}
+            {/* Photo strip — real per-listing photos */}
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              {[0, 1, 2].map((i) => (
+              {listing.photos.map((src, i) => (
                 <div
-                  key={i}
-                  className="relative aspect-[4/3] overflow-hidden panel grid-backdrop"
-                  aria-hidden={i > 0}
+                  key={src}
+                  className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-muted"
                 >
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        "radial-gradient(120% 90% at 30% 15%, oklch(0.851 0.132 183.5 / 0.16), transparent 70%)",
-                    }}
+                  <img
+                    src={src}
+                    alt={`${listing.name} — ${PHOTO_LABELS[i] ?? "photo"}`}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
                   />
-                  <span className="absolute bottom-3 left-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                    {["Inventory photo", "Setup view", "Storage & handling"][i]}
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{ background: "linear-gradient(to top, rgba(15,20,24,0.75), transparent 55%)" }}
+                  />
+                  <span className="absolute bottom-3 left-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white">
+                    {PHOTO_LABELS[i] ?? "Photo"}
                   </span>
                 </div>
               ))}
