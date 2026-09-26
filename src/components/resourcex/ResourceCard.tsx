@@ -1,107 +1,42 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import {
-  BadgeCheck,
-  ChevronDown,
-  MapPin,
-  Star,
-  Truck,
-} from "lucide-react";
+import { BadgeCheck, MapPin, Star, Truck } from "lucide-react";
 import { MatchBadge } from "@/components/resourcex/MatchMeter";
 import { Button } from "@/components/ui/button";
-import { inr, matchScore, type ResourceListing } from "@/lib/resourcex-data";
+import { computeListingPrice, inr, matchScore, type ResourceListing } from "@/lib/resourcex-data";
 import { cn } from "@/lib/utils";
 
 export function ResourceCard({
   listing,
+  requestedQuantity,
   active,
   onHighlight,
 }: {
   listing: ResourceListing;
+  requestedQuantity?: number;
   active?: boolean;
   onHighlight?: (id: string) => void;
 }) {
-    const score = matchScore(listing.match);
-  const [animatedScore, setAnimatedScore] = useState(0);
-  const [showMatchDetails, setShowMatchDetails] = useState(false);
+  const score = matchScore(listing.match);
+  const displayPrice = computeListingPrice(listing, requestedQuantity);
 
-  useEffect(() => {
-    let current = 0;
-
-    const interval = window.setInterval(() => {
-      current += 2;
-
-      if (current >= score) {
-        current = score;
-        window.clearInterval(interval);
-      }
-
-      setAnimatedScore(current);
-    }, 18);
-
-    return () => window.clearInterval(interval);
-  }, [score]);
   return (
     <article
       onMouseEnter={() => onHighlight?.(listing.id)}
       onClick={() => onHighlight?.(listing.id)}
       className={cn(
-        "panel group cursor-pointer p-4 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/50 hover:shadow-[0_12px_40px_rgba(45,230,210,0.10)] sm:p-5",
+        "panel cursor-pointer p-4 transition-all duration-200 hover:border-primary/40 sm:p-5",
         active && "border-primary/60 glow-ring",
       )}
     >
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
         <div className="min-w-0">
-          <div
-  className={cn(
-    "inline-flex items-center rounded-full transition-all duration-500",
-    active && "drop-shadow-[0_0_12px_rgba(45,230,210,0.35)]",
-  )}
->
-  <MatchBadge score={animatedScore} />
-</div>
-<button
-  type="button"
-  onClick={(e) => {
-    e.stopPropagation();
-    setShowMatchDetails((prev) => !prev);
-  }}
-  className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-primary transition-colors hover:text-primary/80"
->
-  Why this match?
-  <ChevronDown
-    className={cn(
-      "h-3.5 w-3.5 transition-transform duration-300",
-      showMatchDetails && "rotate-180",
-    )}
-  />
-</button>
-
-{showMatchDetails && (
-  <div className="mt-3 space-y-2 rounded-xl border border-primary/15 bg-primary/5 p-3">
-    {[
-      "Available for your requested date",
-      `${listing.distanceKm} km from your location`,
-      `${listing.quantity} units meet your requirement`,
-      `Within your ${inr(listing.totalPrice)} budget`,
-      ...(listing.delivery ? ["Delivery available"] : []),
-    ].map((reason) => (
-      <div
-        key={reason}
-        className="flex items-center gap-2 text-[11px] text-muted-foreground"
-      >
-        <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
-        {reason}
-      </div>
-    ))}
-  </div>
-)}
+          <MatchBadge score={score} />
           <h3 className="mt-2 truncate text-base font-bold text-foreground">{listing.provider}</h3>
           <p className="truncate text-sm text-muted-foreground">{listing.name}</p>
         </div>
         <div className="shrink-0 text-right">
           <div className="text-lg font-extrabold text-foreground tabular-nums">
-            {inr(listing.totalPrice)}
+            {inr(displayPrice)}
           </div>
           <div className="text-[11px] text-muted-foreground">{inr(listing.unitPrice)} / unit</div>
         </div>
@@ -112,6 +47,11 @@ export function ResourceCard({
           <dt className="text-muted-foreground">Available</dt>
           <dd className="mt-0.5 font-semibold text-foreground tabular-nums">
             {listing.quantity} units
+            {typeof requestedQuantity === "number" && (
+              <span className="ml-1 font-normal text-muted-foreground">
+                · Requested {requestedQuantity}
+              </span>
+            )}
           </dd>
         </div>
         <div>
@@ -156,7 +96,10 @@ export function ResourceCard({
           </Link>
         </Button>
         <Button asChild size="sm">
-          <Link to="/request/$resourceId" params={{ resourceId: listing.id }}>
+          <Link 
+          to="/request/$resourceId" 
+          params={{ resourceId: listing.id }}
+          search={{ quantity: requestedQuantity ?? 1 }}>
             Request
           </Link>
         </Button>

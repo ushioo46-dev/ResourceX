@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin, Navigation, Satellite } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Map, Marker } from "@vis.gl/react-google-maps";
 import { Button } from "@/components/ui/button";
 import { inr, matchScore, type ResourceListing } from "@/lib/resourcex-data";
 import { cn } from "@/lib/utils";
@@ -8,10 +9,28 @@ import { cn } from "@/lib/utils";
 /**
  * Google Maps integration surface for ResourceX.
  *
- * Renders cyan provider markers over a dark map surface with provider preview
- * cards. When the Google Maps browser key is connected, live tiles and routes
- * render in the same panel. No other map provider is used.
+ * Renders cyan provider markers over a real, dark-styled Google Map.
+ * Relies on <APIProvider> being set up once at the app root (see
+ * src/routes/__root.tsx) so it doesn't need its own API key here.
+ *
+ * Uses the classic `Marker` (not `AdvancedMarker`/`Pin`) deliberately:
+ * AdvancedMarker requires a cloud-registered Map ID and, without one,
+ * throws "Unknown property 'data-tsd-source' of PinElement". Classic
+ * Marker needs no Map ID, so inline `styles` can drive the dark theme
+ * directly with no extra Cloud Console setup.
  */
+
+const darkMapStyle = [
+  { elementType: "geometry", stylers: [{ color: "#0f1418" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#0f1418" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#8a9aa0" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#1c2529" }] },
+  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#0f1418" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#0a1a1c" }] },
+  { featureType: "poi", elementType: "geometry", stylers: [{ color: "#161d21" }] },
+  { featureType: "administrative", elementType: "geometry", stylers: [{ color: "#2a3438" }] },
+  { featureType: "transit", stylers: [{ visibility: "off" }] },
+];
 
 export function GoogleMapPanel({
   listings,
@@ -24,34 +43,25 @@ export function GoogleMapPanel({
   onSelect?: (id: string) => void;
   className?: string;
 }) {
-  const positions = useMemo(() => {
-    const lats = listings.map((l) => l.lat);
-    const lngs = listings.map((l) => l.lng);
-    const minLat = Math.min(...lats);
-    const maxLat = Math.max(...lats);
-    const minLng = Math.min(...lngs);
-    const maxLng = Math.max(...lngs);
-    return listings.map((l) => ({
-      id: l.id,
-      top: 86 - ((l.lat - minLat) / (maxLat - minLat || 1)) * 72,
-      left: 12 + ((l.lng - minLng) / (maxLng - minLng || 1)) * 74,
-    }));
+  const [internalActive, setInternalActive] = useState<string | null>(activeId ?? null);
+  const currentActiveId = activeId ?? internalActive;
+
+  const center = useMemo(() => {
+    if (listings.length === 0) return { lat: 19.076, lng: 72.8777 }; // Mumbai fallback
+    const lat = listings.reduce((sum, l) => sum + l.lat, 0) / listings.length;
+    const lng = listings.reduce((sum, l) => sum + l.lng, 0) / listings.length;
+    return { lat, lng };
   }, [listings]);
 
-  const active = listings.find((l) => l.id === activeId) ?? null;
+  const active = listings.find((l) => l.id === currentActiveId) ?? null;
+
+  const handleSelect = (id: string) => {
+    onSelect?.(id);
+    setInternalActive(id);
+  };
 
   return (
     <div className={cn("panel relative overflow-hidden", className)}>
-      <div className="absolute inset-0 grid-backdrop opacity-70" aria-hidden />
-      <div
-        className="absolute inset-0"
-        aria-hidden
-        style={{
-          background:
-            "radial-gradient(120% 80% at 30% 20%, oklch(0.29 0.043 236 / 0.9), oklch(0.209 0.032 231.5))",
-        }}
-      />
-
       <div className="relative flex items-center justify-between gap-3 border-b border-border px-4 py-3">
         <div className="flex min-w-0 items-center gap-2">
           <Satellite className="h-4 w-4 shrink-0 text-primary" />
@@ -64,54 +74,59 @@ export function GoogleMapPanel({
         </span>
       </div>
 
-
-      <div className="relative h-[360px] lg:h-[calc(100%-49px)]">
-        {positions.map((p) => {
-          const listing = listings.find((l) => l.id === p.id)!;
-          const isActive = p.id === activeId;
-          return (
-            <button
-              key={p.id}
-              onClick={() => onSelect?.(p.id)}
-              aria-label={`${listing.provider} marker`}
-              className="absolute -translate-x-1/2 -translate-y-1/2"
-              style={{ top: `${p.top}%`, left: `${p.left}%` }}
-            >
-              <span
-  className={cn(
-    "relative grid h-8 w-8 place-items-center rounded-full border transition-all duration-300",
-    isActive
-      ? "scale-125 border-primary bg-primary text-primary-foreground shadow-[0_0_24px_var(--color-primary)]"
-      : "border-primary/50 bg-card text-primary hover:scale-110 hover:border-primary hover:shadow-[0_0_18px_rgba(45,230,210,0.35)]",
-  )}
->
-  {isActive && (
-    <span className="absolute inset-[-7px] animate-ping rounded-full border border-primary/40" />
-  )}
-
-  <MapPin className="relative z-10 h-4 w-4" />
-</span>
-            </button>
-          );
-        })}
+      <div className="relative h-[360px] sm:h-[420px] lg:h-[480px]">
+        <Map
+          defaultCenter={center}
+          defaultZoom={listings.length > 1 ? 10 : 13}
+          styles={darkMapStyle}
+          disableDefaultUI
+          zoomControl
+          gestureHandling="greedy"
+          className="h-full w-full"
+        >
+          {listings.map((listing) => {
+            const isActive = listing.id === currentActiveId;
+            return (
+              <Marker
+                key={listing.id}
+                position={{ lat: listing.lat, lng: listing.lng }}
+                onClick={() => handleSelect(listing.id)}
+                icon={{
+                  // google.maps.SymbolPath.CIRCLE === 0. Using the literal
+                  // avoids touching the `google` global at all, since it can
+                  // exist as a stub before google.maps.SymbolPath is ready
+                  // (and doesn't exist yet during server-side rendering).
+                  path: 0,
+                  scale: isActive ? 11 : 8,
+                  fillColor: isActive ? "#2de6d2" : "#12232a",
+                  fillOpacity: 1,
+                  strokeColor: "#2de6d2",
+                  strokeWeight: 2,
+                }}
+              />
+            );
+          })}
+        </Map>
 
         {active && (
-          <div className="absolute inset-x-3 bottom-3 glass rounded-xl p-3">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-foreground">{active.provider}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {active.distanceKm} km · {active.quantity} {active.name.toLowerCase()}
-                </p>
-                <p className="mt-1 text-xs font-semibold text-primary">
-                  {inr(active.totalPrice)} · {matchScore(active.match)}% match
-                </p>
+          <div className="pointer-events-none absolute inset-x-3 bottom-3">
+            <div className="glass pointer-events-auto rounded-xl p-3">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold text-foreground">{active.provider}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {active.distanceKm} km · {active.quantity} {active.name.toLowerCase()}
+                  </p>
+                  <p className="mt-1 text-xs font-semibold text-primary">
+                    {inr(active.totalPrice)} · {matchScore(active.match)}% match
+                  </p>
+                </div>
+                <Button asChild size="sm" className="shrink-0">
+                  <Link to="/resource/$resourceId" params={{ resourceId: active.id }}>
+                    View
+                  </Link>
+                </Button>
               </div>
-              <Button asChild size="sm" className="shrink-0">
-                <Link to="/resource/$resourceId" params={{ resourceId: active.id }}>
-                  View
-                </Link>
-              </Button>
             </div>
           </div>
         )}
@@ -126,7 +141,6 @@ export function GoogleMapPanel({
             </p>
           </div>
         )}
-
       </div>
     </div>
   );

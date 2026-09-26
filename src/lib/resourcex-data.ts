@@ -326,30 +326,75 @@ export type ParsedRequirement = {
   budget: string;
 };
 
-/** Rule-based requirement parser used for the prototype's AI-assisted search. */
-export function parseRequirement(text: string): ParsedRequirement {
+/**
+ * Finds the best matching hospitality resource from the actual
+ * ResourceX listings.
+ */
+function findResource(text: string): string | null {
   const t = text.toLowerCase();
-  const qty = t.match(/(\d{2,5})\s*(chairs|tables|seats|spaces|units|pax|people)?/);
-  const budget = t.match(/(?:under|below|within|upto|up to|max)?\s*(?:₹|rs\.?|inr)\s*([\d,]+)/);
 
-  const resourceMap: Array<[RegExp, string]> = [
-    [/chair/, "Banquet Chairs"],
-    [/table/, "Round Banquet Tables"],
-    [/projector|screen/, "4K Projector & Screen"],
-    [/parking/, "Event Parking Spaces"],
-    [/sound|speaker|audio/, "Line Array Sound System"],
-    [/kitchen/, "Commercial Kitchen Capacity"],
-    [/hall|banquet space|venue/, "Banquet Hall"],
-    [/vehicle|shuttle|bus|cab/, "Guest Shuttle Vehicles"],
-    [/catering|chafing|buffet/, "Catering Equipment"],
+  // Common words users may use for each ResourceX listing.
+  const aliases: Array<[string[], string]> = [
+    [["chair", "chairs", "seat", "seats"], "Banquet Chairs"],
+    [["table", "tables"], "Round Banquet Tables"],
+    [["projector", "projectors", "screen", "screens"], "4K Projector & Screen"],
+    [["parking", "park", "spaces"], "Event Parking Spaces"],
+    [["sound", "speaker", "speakers", "audio", "pa"], "Line Array Sound System"],
+    [["kitchen"], "Commercial Kitchen Capacity"],
+    [["hall", "venue", "banquet hall"], "Banquet Hall (400 pax)"],
+    [["vehicle", "vehicles", "shuttle", "shuttles", "bus", "buses", "cab", "cabs"], "Guest Shuttle Vehicles"],
+    [["catering", "chafing", "buffet", "warmer", "warmers"], "Catering & Chafing Equipment"],
   ];
-  const resource = resourceMap.find(([re]) => re.test(t))?.[1] ?? "Banquet Chairs";
+
+  // First check user-friendly aliases.
+  for (const [words, resource] of aliases) {
+    if (words.some((word) => t.includes(word))) {
+      return resource;
+    }
+  }
+
+  // Then check the actual listing names dynamically.
+  const matchingListing = listings.find((listing) => {
+    const words = listing.name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .split(/\s+/)
+      .filter((word) => word.length > 2);
+
+    return words.some((word) => t.includes(word));
+  });
+
+  return matchingListing?.name ?? null;
+}
+
+/**
+ * Extracts all "quantity + resource" combinations from a sentence.
+ *
+ * Examples:
+ * "40 tables and 50 chairs"
+ * -> tables: 40
+ * -> chairs: 50
+ *
+ * "2 projectors, 4 speakers and 100 parking spaces"
+ * -> projectors: 2
+ * -> speakers: 4
+ * -> parking spaces: 100
+ */
+export function parseRequirements(text: string): ParsedRequirement[] {
+  const t = text.toLowerCase();
+
+  const budget = t.match(
+    /(?:under|below|within|upto|up to|max)?\s*(?:₹|rs\.?|inr)\s*([\d,]+)/
+  );
 
   const locationMatch = t.match(
-    /(?:near|in|around|at)\s+(the\s+)?([a-z\s]{3,28}?)(?=\s(?:tomorrow|today|tonight|next|on|under|below|for|within|by)|[,.]|$)/,
+    /(?:near|in|around|at)\s+(the\s+)?([a-z\s]{3,28}?)(?=\s+(?:tomorrow|today|tonight|next|on|under|below|for|within|by)\b|[,.]|$)/
   );
+
   const location = locationMatch
-    ? locationMatch[2]!.trim().replace(/\b\w/g, (c) => c.toUpperCase())
+    ? locationMatch[2]!
+        .trim()
+        .replace(/\b\w/g, (c) => c.toUpperCase())
     : "City Centre";
 
   const date = /tomorrow/.test(t)
@@ -370,16 +415,108 @@ export function parseRequirement(text: string): ParsedRequirement {
         ? "Afternoon (12 PM – 5 PM)"
         : "Evening (5 PM – 11 PM)";
 
-  return {
-    resource,
-    quantity: qty?.[1] ?? "150",
-    location,
-    date,
-    time,
-    budget: budget ? "₹" + budget[1]!.replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "₹10,000",
-  };
+  const formattedBudget = budget
+    ? "₹" +
+      budget[1]!
+        .replace(/,/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    : "₹10,000";
+
+  const requirements: ParsedRequirement[] = [];
+
+  /*
+   * Find every number in the user's sentence.
+   *
+   * Example:
+   * "I need 40 tables and 50 chairs"
+   *
+   * matches:
+   * 40
+   * 50
+   */
+  const quantityMatches = [...t.matchAll(/\b(\d{1,5})\b/g)];
+
+  for (const match of quantityMatches) {
+    const quantity = match[1];
+
+    if (!quantity) continue;
+
+    const start = match.index ?? 0;
+
+    // Look at the words immediately following the number.
+    const afterNumber = t.slice(start + match[0].length, start + match[0].length + 80);
+
+    const resource = findResource(afterNumber);
+
+    if (!resource) continue;
+
+    requirements.push({
+      resource,
+      quantity,
+      location,
+      date,
+      time,
+      budget: formattedBudget,
+    });
+  }
+
+  /*
+   * Remove duplicates.
+   */
+  const uniqueRequirements = requirements.filter(
+    (req, index, array) =>
+      array.findIndex(
+        (x) =>
+          x.resource.toLowerCase() === req.resource.toLowerCase() &&
+          x.quantity === req.quantity,
+      ) === index,
+  );
+
+  /*
+   * If no quantity was found, still try to identify
+   * a resource from the sentence.
+   */
+  if (uniqueRequirements.length === 0) {
+    const resource = findResource(t);
+
+    if (resource) {
+      uniqueRequirements.push({
+        resource,
+        quantity: "150",
+        location,
+        date,
+        time,
+        budget: formattedBudget,
+      });
+    }
+  }
+
+  /*
+   * Final fallback.
+   */
+  if (uniqueRequirements.length === 0) {
+    uniqueRequirements.push({
+      resource: "Banquet Chairs",
+      quantity: "150",
+      location,
+      date,
+      time,
+      budget: formattedBudget,
+    });
+  }
+
+  return uniqueRequirements;
 }
 
+/**
+ * Backward-compatible single-resource parser.
+ *
+ * Existing parts of the website that still call parseRequirement()
+ * will continue to work.
+ */
+export function parseRequirement(text: string): ParsedRequirement {
+  return parseRequirements(text)[0]!;
+}
 export const utilizationSeries = [
   { month: "Apr", utilization: 54, bookings: 18, revenue: 92000 },
   { month: "May", utilization: 61, bookings: 24, revenue: 114000 },
@@ -485,3 +622,174 @@ export const reviews = [
   { business: "Grand Vista Resort", rating: 5, text: "Clean inventory, transparent pricing and quick negotiation over ResourceX. Saved us a last-minute crisis.", date: "Jul 2026" },
   { business: "Urban Banquets", rating: 4, text: "Good condition and on-time delivery. Pickup was slightly delayed but communication was clear.", date: "Jul 2026" },
 ];
+
+// ─────────────────────────────────────────────
+// Multi-requirement matching & fulfillment logic
+// ─────────────────────────────────────────────
+
+export type MatchedListing = ResourceListing & { requestedQuantity: number };
+
+export type RequestedRequirement = { resource: string; quantity: number };
+
+export type RequirementGroup = {
+  requirement: RequestedRequirement;
+  matches: MatchedListing[];
+};
+
+export type FulfillmentItem = {
+  requirement: RequestedRequirement;
+  listing: MatchedListing;
+};
+
+export type FulfillmentPlan = {
+  items: FulfillmentItem[];
+  total: number;
+};
+
+export type ListingFilters = {
+  maxDistance: number;
+  maxPrice: number;
+  minRating: number;
+  deliveryOnly: boolean;
+  selectedCats: string[];
+};
+
+export type SortOption = "Best Match" | "Closest" | "Lowest Price" | "Highest Rated";
+
+/**
+ * Price for a listing scaled to the quantity actually requested,
+ * rather than the fixed `totalPrice` in the mock data (which assumes
+ * a default booking size). Falls back to `totalPrice` if no quantity
+ * is given.
+ */
+export function computeListingPrice(listing: ResourceListing, requestedQuantity?: number) {
+  if (typeof requestedQuantity === "number" && requestedQuantity > 0) {
+    return requestedQuantity * listing.unitPrice;
+  }
+  return listing.totalPrice;
+}
+
+export function listingSatisfiesRequirement(
+  l: ResourceListing,
+  requirement: RequestedRequirement,
+  filters: ListingFilters,
+) {
+  const listingName = l.name.toLowerCase().trim();
+  const requirementName = requirement.resource.toLowerCase().trim();
+
+  const resourceMatches =
+    listingName === requirementName ||
+    listingName.includes(requirementName) ||
+    requirementName.includes(listingName);
+
+  const quantityMatches = l.quantity >= requirement.quantity;
+
+  const passesDistance = l.distanceKm <= filters.maxDistance + 4;
+  const passesPrice = computeListingPrice(l, requirement.quantity) <= filters.maxPrice;
+  const passesRating = l.rating >= filters.minRating;
+  const passesDelivery = !filters.deliveryOnly || l.delivery;
+  const passesCategory =
+    filters.selectedCats.length === 0 || filters.selectedCats.includes(l.category);
+
+  return (
+    resourceMatches &&
+    quantityMatches &&
+    passesDistance &&
+    passesPrice &&
+    passesRating &&
+    passesDelivery &&
+    passesCategory
+  );
+}
+
+export function sortListings<T extends ResourceListing>(items: T[], sort: SortOption): T[] {
+  const sorted = [...items];
+  if (sort === "Best Match") sorted.sort((a, b) => matchScore(b.match) - matchScore(a.match));
+  if (sort === "Closest") sorted.sort((a, b) => a.distanceKm - b.distanceKm);
+  if (sort === "Lowest Price") sorted.sort((a, b) => a.totalPrice - b.totalPrice);
+  if (sort === "Highest Rated") sorted.sort((a, b) => b.rating - a.rating);
+  return sorted;
+}
+
+/**
+ * Option B: for each requirement, find every provider that can
+ * individually satisfy it (enough quantity + passes filters).
+ */
+export function buildRequirementGroups(
+  requirements: RequestedRequirement[],
+  filters: ListingFilters,
+  sort: SortOption,
+): RequirementGroup[] {
+  return requirements.map((requirement) => {
+    const matches: MatchedListing[] = listings
+      .filter((l) => listingSatisfiesRequirement(l, requirement, filters))
+      .map((l) => ({ ...l, requestedQuantity: requirement.quantity }));
+
+    return { requirement, matches: sortListings(matches, sort) };
+  });
+}
+
+/**
+ * Option C: build the best complete combination that fulfills every
+ * requirement. Prefers bundling into fewer providers when a provider
+ * can cover more than one requirement, but only if doing so doesn't
+ * drop the average match score by more than BUNDLE_TOLERANCE points.
+ */
+export function buildFulfillmentPlan(groups: RequirementGroup[]): FulfillmentPlan | null {
+  if (groups.length === 0 || groups.some((g) => g.matches.length === 0)) {
+    return null;
+  }
+
+  const bestByRequirement = groups.map((g) =>
+    [...g.matches].sort((a, b) => matchScore(b.match) - matchScore(a.match)),
+  );
+
+  const independentPlan = bestByRequirement.map((list) => list[0]!);
+  const independentAvgScore =
+    independentPlan.reduce((sum, l) => sum + matchScore(l.match), 0) / independentPlan.length;
+
+  const providerAppearances = new Map<string, number>();
+  bestByRequirement.forEach((list) => {
+    const providers = new Set(list.map((l) => l.provider));
+    providers.forEach((p) => providerAppearances.set(p, (providerAppearances.get(p) ?? 0) + 1));
+  });
+
+  let bestPlan = independentPlan;
+  let bestProviderCount = new Set(independentPlan.map((l) => l.provider)).size;
+
+  const BUNDLE_TOLERANCE = 10; // max acceptable average match-score drop
+
+  for (const [provider, appearances] of providerAppearances) {
+    if (appearances < 2) continue;
+
+    const candidatePlan = bestByRequirement.map((list) => {
+      const providerMatch = list.find((l) => l.provider === provider);
+      return providerMatch ?? list[0]!;
+    });
+
+    const candidateAvgScore =
+      candidatePlan.reduce((sum, l) => sum + matchScore(l.match), 0) / candidatePlan.length;
+
+    const candidateProviderCount = new Set(candidatePlan.map((l) => l.provider)).size;
+
+    const withinTolerance = independentAvgScore - candidateAvgScore <= BUNDLE_TOLERANCE;
+    const isMoreBundled = candidateProviderCount < bestProviderCount;
+
+    if (withinTolerance && isMoreBundled) {
+      bestPlan = candidatePlan;
+      bestProviderCount = candidateProviderCount;
+    }
+  }
+
+  const items: FulfillmentItem[] = bestPlan.map((listing, i) => ({
+    requirement: groups[i]!.requirement,
+    listing,
+  }));
+
+  const total = items.reduce(
+    (sum, item) => sum + computeListingPrice(item.listing, item.listing.requestedQuantity),
+    0,
+  );
+
+  return { items, total };
+}
