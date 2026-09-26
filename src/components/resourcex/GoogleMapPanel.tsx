@@ -78,15 +78,19 @@ export function GoogleMapPanel({
               style={{ top: `${p.top}%`, left: `${p.left}%` }}
             >
               <span
-                className={cn(
-                  "grid h-8 w-8 place-items-center rounded-full border transition-all",
-                  isActive
-                    ? "scale-125 border-primary bg-primary text-primary-foreground shadow-[0_0_24px_var(--color-primary)]"
-                    : "border-primary/50 bg-card text-primary hover:border-primary",
-                )}
-              >
-                <MapPin className="h-4 w-4" />
-              </span>
+  className={cn(
+    "relative grid h-8 w-8 place-items-center rounded-full border transition-all duration-300",
+    isActive
+      ? "scale-125 border-primary bg-primary text-primary-foreground shadow-[0_0_24px_var(--color-primary)]"
+      : "border-primary/50 bg-card text-primary hover:scale-110 hover:border-primary hover:shadow-[0_0_18px_rgba(45,230,210,0.35)]",
+  )}
+>
+  {isActive && (
+    <span className="absolute inset-[-7px] animate-ping rounded-full border border-primary/40" />
+  )}
+
+  <MapPin className="relative z-10 h-4 w-4" />
+</span>
             </button>
           );
         })}
