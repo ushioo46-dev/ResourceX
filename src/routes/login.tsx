@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cities } from "@/lib/resourcex-data";
+import { demoStore } from "@/lib/demo-store";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -31,11 +32,14 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const navigate = useNavigate();
   const [role, setRole] = useState<"provider" | "seeker">("provider");
+  const [businessName, setBusinessName] = useState("Hotel Horizon");
 
   const go = (label: string) => {
+    demoStore.login(role, businessName || "Demo Business");
     toast.success(label, { description: "Prototype session started as a demo business account." });
     navigate({ to: role === "provider" ? "/dashboard" : "/search" });
   };
+
 
   return (
     <div className="relative min-h-screen bg-background">
@@ -70,9 +74,14 @@ function LoginPage() {
 
             <TabsContent value="register" className="mt-6 space-y-4">
               <div>
-                <Label>Business name</Label>
-                <Input className="mt-2" placeholder="Hotel Horizon" />
-              </div>
+  <Label>Business name</Label>
+  <Input
+    className="mt-2"
+    placeholder="Hotel Horizon"
+    value={businessName}
+    onChange={(e) => setBusinessName(e.target.value)}
+  />
+</div>
               <div>
                 <Label>Business type</Label>
                 <Input className="mt-2" placeholder="Hotel, banquet hall, event company…" />

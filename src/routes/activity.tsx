@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { ArrowRight, CalendarClock, ClipboardList, Search } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -8,7 +8,14 @@ import { Button } from "@/components/ui/button";
 import { useDemoState } from "@/lib/demo-store";
 import { bookings, featuredListing, incomingRequests, inr } from "@/lib/resourcex-data";
 
+import { demoStore } from "@/lib/demo-store";
+
 export const Route = createFileRoute("/activity")({
+  beforeLoad: () => {
+    if (!demoStore.get().isLoggedIn) {
+      throw redirect({ to: "/login" });
+    }
+  },
   head: () => ({
     meta: [
       { title: "My Requests & Bookings — ResourceX" },

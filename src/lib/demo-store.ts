@@ -2,6 +2,7 @@ import { useSyncExternalStore } from "react";
 import { resourcePerformance, utilizationSeries } from "@/lib/resourcex-data";
 
 export type PaymentMethod = "escrow" | "offline";
+export type UserRole = "provider" | "seeker" | null;
 
 export type DemoState = {
   /** Payment selection made during the negotiation → booking flow. */
@@ -13,6 +14,10 @@ export type DemoState = {
   verification: "unverified" | "pending" | "verified";
   /** Bookings completed live during a demo, applied on top of demo data. */
   ledger: { resource: string; amount: number; utilizationBoost: number }[];
+  /** Demo session auth — not real auth, just enough to gate routes for the prototype. */
+  isLoggedIn: boolean;
+  role: UserRole;
+  businessName: string | null;
 };
 
 const initial: DemoState = {
@@ -22,6 +27,9 @@ const initial: DemoState = {
   termsAccepted: false,
   verification: "verified",
   ledger: [],
+  isLoggedIn: false,
+  role: null,
+  businessName: null,
 };
 
 let state: DemoState = initial;
@@ -37,6 +45,14 @@ export const demoStore = {
   },
   set: (patch: Partial<DemoState>) => {
     state = { ...state, ...patch };
+    emit();
+  },
+  login: (role: UserRole, businessName: string) => {
+    state = { ...state, isLoggedIn: true, role, businessName };
+    emit();
+  },
+  logout: () => {
+    state = { ...state, isLoggedIn: false, role: null, businessName: null };
     emit();
   },
   recordBooking: (entry: { resource: string; amount: number; utilizationBoost?: number }) => {

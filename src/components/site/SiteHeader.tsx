@@ -1,8 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
+import { demoStore, useDemoState } from "@/lib/demo-store";
 
 const nav = [
   { label: "Home", to: "/" },
@@ -15,6 +16,13 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { isLoggedIn, businessName } = useDemoState();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    demoStore.logout();
+    navigate({ to: "/" });
+  };
 
   return (
     <header className="sticky top-0 z-50 glass">
@@ -33,12 +41,25 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="hidden items-center gap-2 sm:flex">
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/login">Login</Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link to="/login">Get Started</Link>
-          </Button>
+          {isLoggedIn ? (
+            <>
+              <span className="px-2 text-sm font-medium text-foreground">
+                {businessName}
+              </span>
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
+                <LogOut className="h-4 w-4" /> Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/login">Login</Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link to="/login">Get Started</Link>
+              </Button>
+            </>
+          )}
         </div>
         <button
           aria-label="Toggle navigation"
@@ -62,14 +83,31 @@ export function SiteHeader() {
               </Link>
             ))}
           </nav>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <Button asChild variant="outline" size="sm" onClick={() => setOpen(false)}>
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button asChild size="sm" onClick={() => setOpen(false)}>
-              <Link to="/login">Get Started</Link>
-            </Button>
-          </div>
+          {isLoggedIn ? (
+            <div className="mt-3">
+              <p className="px-3 text-sm font-medium text-foreground">{businessName}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2 w-full"
+                onClick={() => {
+                  handleLogout();
+                  setOpen(false);
+                }}
+              >
+                <LogOut className="h-4 w-4" /> Logout
+              </Button>
+            </div>
+          ) : (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Button asChild variant="outline" size="sm" onClick={() => setOpen(false)}>
+                <Link to="/login">Login</Link>
+              </Button>
+              <Button asChild size="sm" onClick={() => setOpen(false)}>
+                <Link to="/login">Get Started</Link>
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </header>
