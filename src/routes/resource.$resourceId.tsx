@@ -1,5 +1,6 @@
 import { useWeather } from "@/hooks/useWeather";
 import { classifySeverity, describeWeatherCode } from "@/lib/weather";
+import { SocialSignalsPanel } from "@/components/resourcex/SocialSignalsPanel";
 
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import {
@@ -63,7 +64,7 @@ const PHOTO_LABELS = ["Inventory photo", "Setup view", "Storage & handling"];
 
 function ResourceDetails() {
   const { listing } = Route.useLoaderData();
-    const { data: weatherData } = useWeather(listing.lat, listing.lng);
+  const { data: weatherData } = useWeather(listing.lat, listing.lng);
 
   const severityColor: Record<string, string> = {
     clear: "#34d399",
@@ -74,12 +75,12 @@ function ResourceDetails() {
   };
 
   const riskColorById: Record<string, string> = weatherData
-  ? { [listing.id]: severityColor[classifySeverity(weatherData.current)] ?? "#2de6d2" }
-  : {};
+    ? { [listing.id]: severityColor[classifySeverity(weatherData.current)] ?? "#2de6d2" }
+    : {};
 
   const weatherBadge: string = weatherData
-  ? `${Math.round(weatherData.current.temperatureC)}°C · ${describeWeatherCode(weatherData.current.weatherCode)}`
-  : "";
+    ? `${Math.round(weatherData.current.temperatureC)}°C · ${describeWeatherCode(weatherData.current.weatherCode)}`
+    : "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -190,12 +191,12 @@ function ResourceDetails() {
                 {listing.distanceKm} km away
               </p>
               <GoogleMapPanel
-  listings={[listing]}
-  activeId={listing.id}
-  className="mt-4"
-  riskColorById={riskColorById}
-  weatherBadge={weatherBadge}
-/>
+                listings={[listing]}
+                activeId={listing.id}
+                className="mt-4"
+                riskColorById={riskColorById}
+                weatherBadge={weatherBadge}
+              />
             </section>
 
             <section className="mt-8">
@@ -209,7 +210,7 @@ function ResourceDetails() {
               </div>
             </section>
 
-            <section className="mt-8">
+                       <section className="mt-8">
               <h2 className="text-lg font-bold text-foreground">Digital Twin: What-If Simulator</h2>
               <p className="mt-2 text-sm text-muted-foreground">
                 Simulate a hypothetical weather scenario and see the cascading effect across every
@@ -217,6 +218,20 @@ function ResourceDetails() {
               </p>
               <div className="mt-4">
                 <WeatherSimulator />
+              </div>
+            </section>
+
+            <section className="mt-8">
+              <h2 className="text-lg font-bold text-foreground">Real-World Social Signals</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Public chatter and news mentions related to weather conditions in {listing.city},
+                used as a corroborating signal alongside live weather data.
+              </p>
+              <div className="mt-4">
+                <SocialSignalsPanel
+                  city={listing.city}
+                 severity={weatherData ? classifySeverity(weatherData.current) : undefined}
+                />
               </div>
             </section>
 
@@ -256,8 +271,8 @@ function ResourceDetails() {
               </p>
               <Button asChild size="lg" className="mt-5 w-full">
                 <Link to="/request/$resourceId" params={{ resourceId: listing.id }} search={{ quantity: listing.quantity }}>
-  Request Resource
-</Link>
+                  Request Resource
+                </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="mt-2 w-full">
                 <Link to="/negotiation/$resourceId" params={{ resourceId: listing.id }}>
