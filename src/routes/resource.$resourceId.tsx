@@ -1,3 +1,6 @@
+import { useWeather } from "@/hooks/useWeather";
+import { classifySeverity, describeWeatherCode } from "@/lib/weather";
+
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import {
   BadgeCheck,
@@ -12,6 +15,8 @@ import {
 import { AvailabilityCalendar } from "@/components/resourcex/AvailabilityCalendar";
 import { GoogleMapPanel } from "@/components/resourcex/GoogleMapPanel";
 import { MatchMeter } from "@/components/resourcex/MatchMeter";
+import { WeatherImpactPanel } from "@/components/resourcex/WeatherImpactPanel";
+import { WeatherSimulator } from "@/components/resourcex/WeatherSimulator";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -58,6 +63,23 @@ const PHOTO_LABELS = ["Inventory photo", "Setup view", "Storage & handling"];
 
 function ResourceDetails() {
   const { listing } = Route.useLoaderData();
+    const { data: weatherData } = useWeather(listing.lat, listing.lng);
+
+  const severityColor: Record<string, string> = {
+    clear: "#34d399",
+    rain: "#fbbf24",
+    "heavy-rain": "#fb923c",
+    storm: "#f87171",
+    "extreme-heat": "#f87171",
+  };
+
+  const riskColorById: Record<string, string> = weatherData
+  ? { [listing.id]: severityColor[classifySeverity(weatherData.current)] ?? "#2de6d2" }
+  : {};
+
+  const weatherBadge: string = weatherData
+  ? `${Math.round(weatherData.current.temperatureC)}°C · ${describeWeatherCode(weatherData.current.weatherCode)}`
+  : "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,10 +123,7 @@ function ResourceDetails() {
             {/* Photo strip — real per-listing photos */}
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {listing.photos.map((src, i) => (
-                <div
-                  key={src}
-                  className="relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-muted"
-                >
+                <div key={src} className="relative aspect-[4/3] overflow-hidden panel">
                   <img
                     src={src}
                     alt={`${listing.name} — ${PHOTO_LABELS[i] ?? "photo"}`}
@@ -170,7 +189,35 @@ function ResourceDetails() {
                 <MapPin className="h-4 w-4 text-primary" /> {listing.area}, {listing.city} ·{" "}
                 {listing.distanceKm} km away
               </p>
-              <GoogleMapPanel listings={[listing]} activeId={listing.id} className="mt-4" />
+              <GoogleMapPanel
+  listings={[listing]}
+  activeId={listing.id}
+  className="mt-4"
+  riskColorById={riskColorById}
+  weatherBadge={weatherBadge}
+/>
+            </section>
+
+            <section className="mt-8">
+              <h2 className="text-lg font-bold text-foreground">Digital Twin: Weather Impact</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Live weather is fed into ResourceX's simulation model to predict how conditions affect
+                this resource's demand and usable availability right now.
+              </p>
+              <div className="mt-4">
+                <WeatherImpactPanel listing={listing} />
+              </div>
+            </section>
+
+            <section className="mt-8">
+              <h2 className="text-lg font-bold text-foreground">Digital Twin: What-If Simulator</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Simulate a hypothetical weather scenario and see the cascading effect across every
+                resource in the marketplace, not just this one.
+              </p>
+              <div className="mt-4">
+                <WeatherSimulator />
+              </div>
             </section>
 
             <section className="mt-8">
@@ -208,9 +255,9 @@ function ResourceDetails() {
                 {listing.availableDate}
               </p>
               <Button asChild size="lg" className="mt-5 w-full">
-                <Link to="/request/$resourceId" params={{ resourceId: listing.id }}>
-                  Request Resource
-                </Link>
+                <Link to="/request/$resourceId" params={{ resourceId: listing.id }} search={{ quantity: listing.quantity }}>
+  Request Resource
+</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="mt-2 w-full">
                 <Link to="/negotiation/$resourceId" params={{ resourceId: listing.id }}>
