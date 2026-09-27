@@ -37,11 +37,15 @@ export function GoogleMapPanel({
   activeId,
   onSelect,
   className,
+  riskColorById,
+  weatherBadge,
 }: {
   listings: ResourceListing[];
   activeId?: string | null;
   onSelect?: (id: string) => void;
   className?: string;
+  riskColorById?: Record<string, string>;
+  weatherBadge?: string;
 }) {
   const [internalActive, setInternalActive] = useState<string | null>(activeId ?? null);
   const currentActiveId = activeId ?? internalActive;
@@ -74,8 +78,14 @@ export function GoogleMapPanel({
         </span>
       </div>
 
-      <div className="relative h-[360px] sm:h-[420px] lg:h-[480px]">
+            <div className="relative h-[360px] sm:h-[420px] lg:h-[480px]">
+        {weatherBadge && (
+          <div className="pointer-events-none absolute left-3 top-3 z-10 rounded-lg border border-primary/30 bg-background/85 px-3 py-1.5 text-xs font-semibold text-foreground backdrop-blur-sm">
+            {weatherBadge}
+          </div>
+        )}
         <Map
+    
           defaultCenter={center}
           defaultZoom={listings.length > 1 ? 10 : 13}
           styles={darkMapStyle}
@@ -87,26 +97,31 @@ export function GoogleMapPanel({
           {listings.map((listing) => {
             const isActive = listing.id === currentActiveId;
             return (
-              <Marker
+                <Marker
                 key={listing.id}
                 position={{ lat: listing.lat, lng: listing.lng }}
                 onClick={() => handleSelect(listing.id)}
                 icon={{
-                  // google.maps.SymbolPath.CIRCLE === 0. Using the literal
-                  // avoids touching the `google` global at all, since it can
-                  // exist as a stub before google.maps.SymbolPath is ready
-                  // (and doesn't exist yet during server-side rendering).
                   path: 0,
-                  scale: isActive ? 11 : 8,
-                  fillColor: isActive ? "#2de6d2" : "#12232a",
+                  scale: isActive ? 12 : 9,
+                  fillColor: riskColorById?.[listing.id] ?? (isActive ? "#2de6d2" : "#12232a"),
                   fillOpacity: 1,
-                  strokeColor: "#2de6d2",
+                  strokeColor: riskColorById?.[listing.id] ?? "#2de6d2",
                   strokeWeight: 2,
                 }}
               />
             );
           })}
         </Map>
+
+        {riskColorById && (
+          <div className="pointer-events-none absolute right-3 top-3 z-10 flex gap-2 rounded-lg border border-border bg-background/85 px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground backdrop-blur-sm">
+            <LegendDot color="#34d399" label="Low" />
+            <LegendDot color="#fbbf24" label="Med" />
+            <LegendDot color="#fb923c" label="High" />
+            <LegendDot color="#f87171" label="Severe" />
+          </div>
+        )}
 
         {active && (
           <div className="pointer-events-none absolute inset-x-3 bottom-3">
@@ -143,5 +158,13 @@ export function GoogleMapPanel({
         )}
       </div>
     </div>
+  );
+}
+function LegendDot({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="flex items-center gap-1">
+      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
+      {label}
+    </span>
   );
 }
