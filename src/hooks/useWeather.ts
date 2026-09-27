@@ -9,8 +9,10 @@ export function useWeather(lat: number, lng: number) {
   return useQuery({
     queryKey: ["weather", lat, lng],
     queryFn: () => fetchWeather(lat, lng),
-    staleTime: 10 * 60 * 1000, // 10 minutes — Open-Meteo data doesn't change faster than this
-    refetchInterval: 15 * 60 * 1000, // keep it live without hammering the API
+    staleTime: 10 * 60 * 1000,
+    refetchInterval: 15 * 60 * 1000,
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000), // 1s, 2s, 4s backoff
   });
 }
  
@@ -31,11 +33,13 @@ export function useCitiesWeather(listings: ResourceListing[]): Map<string, CityW
     new Map(listings.map((l) => [l.city, { lat: l.lat, lng: l.lng }])).entries(),
   );
  
-  const results = useQueries({
+    const results = useQueries({
     queries: uniqueCities.map(([city, coords]) => ({
       queryKey: ["weather", city, coords.lat, coords.lng],
       queryFn: () => fetchWeather(coords.lat, coords.lng),
       staleTime: 10 * 60 * 1000,
+      retry: 3,
+      retryDelay: (attempt: number) => Math.min(1000 * 2 ** attempt, 8000),
     })),
   });
  
